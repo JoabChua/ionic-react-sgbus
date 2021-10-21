@@ -1,0 +1,7 @@
+{
+  "name": "react-sg-journey",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
