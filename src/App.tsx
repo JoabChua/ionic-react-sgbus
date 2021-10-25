@@ -22,11 +22,26 @@ import "@ionic/react/css/display.css";
 /* Theme variables */
 import "./theme/variables.scss";
 import BusArrival from "./pages/BusArrival";
-import BusServices from "./pages/BusService";
 import Train from "./pages/Train";
 import AboutUs from "./pages/AboutUs";
+import BusServiceDetail from "./pages/BusServiceDetail";
+import { useState } from "react";
+import { BusServiceModel, BusStopModel } from "./models/bus.model";
+import BusServices from "./pages/BusService";
+import BusArrivalDetail from "./pages/BusArrivalDetail";
 
 const App: React.FC = () => {
+  const [selectedBus, setSelectedBus] = useState({} as BusServiceModel);
+  const [selectedBusStop, setSelectedBusStop] = useState({} as BusStopModel);
+
+  const setBusHandler = (bus: BusServiceModel) => {
+    setSelectedBus(bus);
+  };
+
+  const setBusStopHandler = (busStop: BusStopModel) => {
+    setSelectedBusStop(busStop);
+  };
+
   return (
     <IonApp>
       <IonReactRouter>
@@ -37,10 +52,16 @@ const App: React.FC = () => {
               <Redirect to="/busservices" />
             </Route>
             <Route path="/busservices" exact={true}>
-              <BusServices />
+              <BusServices setBus={setBusHandler} />
+            </Route>
+            <Route path="/busservices/:no" exact={true}>
+              <BusServiceDetail bus={selectedBus} />
             </Route>
             <Route path="/busarrival" exact={true}>
-              <BusArrival />
+              <BusArrival setBusStop={setBusStopHandler} />
+            </Route>
+            <Route path="/busarrival/:no" exact={true}>
+              <BusArrivalDetail busStop={selectedBusStop} />
             </Route>
             <Route path="/mrtlrt" exact={true}>
               <Train />
