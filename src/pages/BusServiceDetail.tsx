@@ -8,38 +8,56 @@ import {
   IonBackButton,
   IonLoading,
   IonItem,
+  IonList,
+  IonButton,
+  IonIcon,
 } from "@ionic/react";
 import { useCallback, useEffect, useState } from "react";
-import { BUS_ROUTE_API, LTA_ACCESSS_KEY } from "../configs/bus.config";
 import {
   BusServiceModel,
   BusRouteModel,
-  BusRouteResponseModel,
+  BusStopModel,
 } from "../models/bus.model";
-import { Virtuoso } from "react-virtuoso";
+import "./BusServiceDetail.scss";
+import { swapVerticalOutline } from "ionicons/icons";
+import { useParams } from "react-router";
 
-const BusServiceDetail: React.FC<{ bus: BusServiceModel }> = (props) => {
+const BusServiceDetail: React.FC<{
+  bus: BusServiceModel;
+  setBusStop(bus: any): void;
+}> = ({ bus, setBusStop }) => {
+  const { busno } = useParams<{ busno: string }>();
   const [busRoute, setBusRoute] = useState<BusRouteModel[]>(
     [] as BusRouteModel[],
   );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [direction, setDirection] = useState(1);
+  const [showDirChange, setShowDirChange] = useState(false);
 
-  const fetchBusRoute = useCallback(async () => {
+  const fetchBusRoute = useCallback(async (serviceNo: string) => {
     setIsLoading(true);
     try {
-      const res1 = await fetch(
-        `https://cors-anywhere.herokuapp.com/${BUS_ROUTE_API}`,
-        { headers: LTA_ACCESSS_KEY },
+      let data: BusRouteModel[] =
+        +serviceNo.charAt(0) < 5
+          ? require("../services/busroute.json")
+          : require("../services/busroute2.json");
+      data = data.filter((br) => br.ServiceNo === serviceNo);
+
+      let busStops: BusStopModel[] = require("../services/busstop.json");
+      setShowDirChange(
+        data.some((br) => br.Direction === 1) &&
+          data.some((br) => br.Direction === 2),
       );
-
-      if (!res1.ok) {
-        throw new Error("Something went wrong!");
-      }
-
-      const data = (await res1.json()) as BusRouteResponseModel;
-
-      setBusRoute(data.value);
+      data.forEach((br: BusRouteModel) => {
+        const findobj = busStops.find(
+          (bs) => bs.BusStopCode === br.BusStopCode,
+        );
+        if (findobj) {
+          br.Description = findobj?.Description;
+        }
+      });
+      setBusRoute(data);
     } catch (error: any) {
       setError(error);
     }
@@ -47,8 +65,8 @@ const BusServiceDetail: React.FC<{ bus: BusServiceModel }> = (props) => {
   }, []);
 
   useEffect(() => {
-    fetchBusRoute();
-  }, [fetchBusRoute]);
+    fetchBusRoute(busno);
+  }, [fetchBusRoute, busno]);
 
   return (
     <IonPage>
@@ -57,37 +75,53 @@ const BusServiceDetail: React.FC<{ bus: BusServiceModel }> = (props) => {
           <IonButtons slot="start">
             <IonBackButton defaultHref="/busservices" />
           </IonButtons>
-          <IonTitle>Bus No: {props.bus.ServiceNo}</IonTitle>
+          <IonTitle>Bus No: {bus.ServiceNo}</IonTitle>
+          {showDirChange && (
+            <IonButtons slot="secondary">
+              <IonButton
+                onClick={() => setDirection((prev) => (prev === 1 ? 2 : 1))}
+              >
+                <IonIcon
+                  slot="icon-only"
+                  icon={swapVerticalOutline}
+                  className={direction === 1 ? "normal" : "direction2"}
+                />
+              </IonButton>
+            </IonButtons>
+          )}
         </IonToolbar>
       </IonHeader>
 
-      <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">Bus No: {props.bus.ServiceNo}</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-
+      <IonContent>
         <IonLoading isOpen={isLoading} message={"Please wait..."} />
 
         {!isLoading && !!error && <div>{error}</div>}
 
         {!isLoading && (
-          <Virtuoso
-            style={{ height: "100%" }}
-            data={busRoute}
-            totalCount={busRoute.length}
-            itemContent={(index, bus: BusRouteModel) => {
+          <IonList>
+            {busRoute.map((bus, index) => {
+              const routeLink = `/busarrival/${bus.BusStopCode}`;
+
               return (
-                <IonItem key={bus.ServiceNo}>
-                  <div className="item">
-                    <div className="service">{bus.ServiceNo}</div>
-                    <div className="service">{bus.BusStopCode}</div>
-                  </div>
-                </IonItem>
+                direction === bus.Direction && (
+                  <IonItem
+                    key={index}
+                    routerLink={routeLink}
+                    routerDirection="forward"
+                    onClick={() => setBusStop(bus)}
+                  >
+                    <div className="item">
+                      <div className="service">{bus.ServiceNo}</div>
+                      <div className="bus-desc">
+                        <div className="title">{bus.Description}</div>
+                        <div>{bus.BusStopCode}</div>
+                      </div>
+                    </div>
+                  </IonItem>
+                )
               );
-            }}
-          />
+            })}
+          </IonList>
         )}
       </IonContent>
     </IonPage>

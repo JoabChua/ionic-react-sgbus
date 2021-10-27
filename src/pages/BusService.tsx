@@ -14,7 +14,11 @@ import {
 } from "@ionic/react";
 import { search } from "ionicons/icons";
 import { useCallback, useEffect, useState } from "react";
-import { BUS_SERVICE_API, LTA_ACCESSS_KEY } from "../configs/bus.config";
+import {
+  BUS_SERVICE_API,
+  LTA_ACCESSS_KEY,
+  THINGS_PROXY,
+} from "../configs/bus.config";
 import { BusServiceModel, BusServiceResponseModel } from "../models/bus.model";
 import "./BusService.scss";
 import { Virtuoso } from "react-virtuoso";
@@ -48,14 +52,12 @@ const BusServices: React.FC<{ setBus(bus: BusServiceModel): void }> = ({
     setIsLoading(true);
     try {
       const endpoint1 = Http.get({
-        url: `${
-          isPlatform("mobileweb") ? "https://cors-anywhere.herokuapp.com/" : ""
-        }${BUS_SERVICE_API}`,
+        url: `${isPlatform("mobileweb") ? THINGS_PROXY : ""}${BUS_SERVICE_API}`,
         headers: LTA_ACCESSS_KEY,
       });
       const endpoint2 = Http.get({
         url: `${
-          isPlatform("mobileweb") ? "https://cors-anywhere.herokuapp.com/" : ""
+          isPlatform("mobileweb") ? THINGS_PROXY : ""
         }${BUS_SERVICE_API}?$skip=500`,
         headers: LTA_ACCESSS_KEY,
       });
@@ -102,12 +104,7 @@ const BusServices: React.FC<{ setBus(bus: BusServiceModel): void }> = ({
         </IonToolbar>
       </IonHeader>
 
-      <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">Bus Services</IonTitle>
-          </IonToolbar>
-        </IonHeader>
+      <IonContent>
         <IonLoading isOpen={isLoading} message={"Please wait..."} />
         <IonAlert
           isOpen={!!error}

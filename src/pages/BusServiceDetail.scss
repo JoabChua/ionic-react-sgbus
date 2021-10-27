@@ -1,0 +1,18 @@
+.bus-desc {
+  text-align: right;
+
+  .title {
+    font-size: 18px;
+    font-weight: 900;
+  }
+}
+
+.direction2 {
+  color: skyblue;
+  transform: rotate(180deg);
+  transition: ease 0.5s;
+}
+
+.normal {
+  transition: ease 0.5s;
+}
