@@ -35,6 +35,8 @@ export interface BusRouteModel {
   SAT_LastBus: string;
   SUN_FirstBus: string;
   SUN_LastBus: string;
+
+  Description?: string;
 }
 
 export interface BusStopReponseModel {
@@ -48,6 +50,7 @@ export interface BusStopModel {
   Description: string;
   Latitude: number;
   Longitude: number;
+  OriginCode: string;
   distance?: number;
 }
 
