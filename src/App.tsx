@@ -22,7 +22,7 @@ import "@ionic/react/css/display.css";
 /* Theme variables */
 import "./theme/variables.scss";
 import BusArrival from "./pages/BusArrival";
-import Train from "./pages/Train";
+import Favourite from "./pages/Favourite";
 import AboutUs from "./pages/AboutUs";
 import BusServiceDetail from "./pages/BusServiceDetail";
 import { useState } from "react";
@@ -49,22 +49,28 @@ const App: React.FC = () => {
           <Menu />
           <IonRouterOutlet id="main">
             <Route path="/" exact={true}>
-              <Redirect to="/busservices" />
+              <Redirect to="/busarrival" />
             </Route>
             <Route path="/busservices" exact={true}>
               <BusServices setBus={setBusHandler} />
             </Route>
-            <Route path="/busservices/:no" exact={true}>
-              <BusServiceDetail bus={selectedBus} />
+            <Route path="/busservices/:busno" exact={true}>
+              <BusServiceDetail
+                bus={selectedBus}
+                setBusStop={setBusStopHandler}
+              />
             </Route>
             <Route path="/busarrival" exact={true}>
               <BusArrival setBusStop={setBusStopHandler} />
             </Route>
-            <Route path="/busarrival/:no" exact={true}>
-              <BusArrivalDetail busStop={selectedBusStop} />
+            <Route path="/busarrival/:busarrivalno" exact={true}>
+              <BusArrivalDetail
+                busStop={selectedBusStop}
+                setBusStop={setBusStopHandler}
+              />
             </Route>
-            <Route path="/mrtlrt" exact={true}>
-              <Train />
+            <Route path="/fav" exact={true}>
+              <Favourite />
             </Route>
             <Route path="/aboutus" exact={true}>
               <AboutUs />

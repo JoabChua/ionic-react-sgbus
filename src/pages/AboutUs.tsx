@@ -20,12 +20,8 @@ const AboutUs: React.FC = () => {
         </IonToolbar>
       </IonHeader>
 
-      <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">About Us</IonTitle>
-          </IonToolbar>
-        </IonHeader>
+      <IonContent>
+        <h1>Coming Soon</h1>
       </IonContent>
     </IonPage>
   );

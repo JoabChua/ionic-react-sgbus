@@ -6,9 +6,10 @@ import {
   IonMenuButton,
   IonTitle,
   IonContent,
+  IonItem,
 } from "@ionic/react";
 
-const Train: React.FC = () => {
+const Favourite: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
@@ -16,19 +17,15 @@ const Train: React.FC = () => {
           <IonButtons slot="start">
             <IonMenuButton />
           </IonButtons>
-          <IonTitle>Train</IonTitle>
+          <IonTitle>Favourite</IonTitle>
         </IonToolbar>
       </IonHeader>
 
-      <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">Train</IonTitle>
-          </IonToolbar>
-        </IonHeader>
+      <IonContent>
+        <h1>Coming Soon</h1>
       </IonContent>
     </IonPage>
   );
 };
 
-export default Train;
+export default Favourite;

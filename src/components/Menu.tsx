@@ -16,6 +16,7 @@ import {
   busSharp,
   personCircleOutline,
   personCircleSharp,
+  starSharp,
   timeOutline,
   timeSharp,
   trainOutline,
@@ -32,22 +33,22 @@ interface AppPage {
 
 const appPages: AppPage[] = [
   {
-    title: "Bus Services",
-    url: "/busservices",
-    iosIcon: busOutline,
-    mdIcon: busSharp,
-  },
-  {
     title: "Bus Arrival Time",
     url: "/busarrival",
     iosIcon: timeOutline,
     mdIcon: timeSharp,
   },
   {
-    title: "MRT/LRT",
-    url: "/mrtlrt",
-    iosIcon: trainOutline,
-    mdIcon: trainSharp,
+    title: "Bus Services",
+    url: "/busservices",
+    iosIcon: busOutline,
+    mdIcon: busSharp,
+  },
+  {
+    title: "Favorite",
+    url: "/fav",
+    iosIcon: starSharp,
+    mdIcon: starSharp,
   },
   {
     title: "About Us",
@@ -89,16 +90,6 @@ const Menu: React.FC = () => {
             );
           })}
         </IonList>
-
-        {/* <IonList id="labels-list">
-          <IonListHeader>Labels</IonListHeader>
-          {labels.map((label, index) => (
-            <IonItem lines="none" key={index}>
-              <IonIcon slot="start" icon={bookmarkOutline} />
-              <IonLabel>{label}</IonLabel>
-            </IonItem>
-          ))}
-        </IonList> */}
       </IonContent>
     </IonMenu>
   );
