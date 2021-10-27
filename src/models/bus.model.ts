@@ -48,6 +48,7 @@ export interface BusStopModel {
   Description: string;
   Latitude: number;
   Longitude: number;
+  distance?: number;
 }
 
 export interface BusArrivalResponseModel {

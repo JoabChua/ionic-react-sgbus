@@ -22,6 +22,8 @@ import { Virtuoso } from "react-virtuoso";
 import "./BusArrivalDetail.scss";
 import { chevronDownCircleOutline } from "ionicons/icons";
 import { RefresherEventDetail } from "@ionic/core";
+import { Http } from "@capacitor-community/http";
+import { isPlatform } from "@ionic/react";
 
 const diff_minutes = (dt1: string) => {
   if (dt1 === "") {
@@ -44,16 +46,20 @@ const BusArrivalDetail: React.FC<{ busStop: BusStopModel }> = ({ busStop }) => {
 
   const fetchBusArrival = useCallback(async () => {
     try {
-      const res1 = await fetch(
-        `https://cors-anywhere.herokuapp.com/${BUS_ARRIVAL_API}?BusStopCode=${busStop.BusStopCode}`,
-        { headers: LTA_ACCESSS_KEY },
-      );
+      const res1 = await Http.get({
+        url: `${
+          isPlatform("mobileweb") ? "https://cors-anywhere.herokuapp.com/" : ""
+        }${BUS_ARRIVAL_API}?BusStopCode=${busStop.BusStopCode}`,
+        headers: {
+          ...LTA_ACCESSS_KEY,
+        },
+      });
 
-      if (!res1.ok) {
+      if (res1.status !== 200) {
         throw new Error("Something went wrong!");
       }
 
-      const data = (await res1.json()) as BusArrivalResponseModel;
+      const data = res1.data as BusArrivalResponseModel;
 
       setBusArrival(data.Services);
     } catch (error: any) {
@@ -83,7 +89,9 @@ const BusArrivalDetail: React.FC<{ busStop: BusStopModel }> = ({ busStop }) => {
           <IonButtons slot="start">
             <IonBackButton defaultHref="/busarrival" />
           </IonButtons>
-          <IonTitle>Bus Stop Code: {busStop.BusStopCode}</IonTitle>
+          <IonTitle>
+            {busStop.Description} - {busStop.BusStopCode}
+          </IonTitle>
         </IonToolbar>
       </IonHeader>
 
@@ -91,7 +99,7 @@ const BusArrivalDetail: React.FC<{ busStop: BusStopModel }> = ({ busStop }) => {
         <IonHeader collapse="condense">
           <IonToolbar>
             <IonTitle size="large">
-              Bus Stop Code: {busStop.BusStopCode}
+              {busStop.Description} - {busStop.BusStopCode}
             </IonTitle>
           </IonToolbar>
         </IonHeader>
