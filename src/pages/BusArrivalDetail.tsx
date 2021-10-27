@@ -10,6 +10,7 @@ import {
   IonRefresher,
   IonRefresherContent,
   IonLoading,
+  IonList,
 } from "@ionic/react";
 import { useCallback, useEffect, useState } from "react";
 import { BUS_ARRIVAL_API, LTA_ACCESSS_KEY } from "../configs/bus.config";
@@ -18,12 +19,12 @@ import {
   BusArrivalResponseModel,
   BusStopModel,
 } from "../models/bus.model";
-import { Virtuoso } from "react-virtuoso";
 import "./BusArrivalDetail.scss";
 import { chevronDownCircleOutline } from "ionicons/icons";
 import { RefresherEventDetail } from "@ionic/core";
 import { Http } from "@capacitor-community/http";
 import { isPlatform } from "@ionic/react";
+import { useParams } from "react-router";
 
 const diff_minutes = (dt1: string) => {
   if (dt1 === "") {
@@ -36,7 +37,11 @@ const diff_minutes = (dt1: string) => {
     : "Arr";
 };
 
-const BusArrivalDetail: React.FC<{ busStop: BusStopModel }> = ({ busStop }) => {
+const BusArrivalDetail: React.FC<{
+  busStop: BusStopModel;
+  setBusStop(bus: any): void;
+}> = ({ busStop, setBusStop }) => {
+  const { busarrivalno } = useParams<{ busarrivalno: string }>();
   const [busArrival, setBusArrival] = useState<BusArrivalModel[]>(
     [] as BusArrivalModel[],
   );
@@ -44,12 +49,12 @@ const BusArrivalDetail: React.FC<{ busStop: BusStopModel }> = ({ busStop }) => {
   const [error, setError] = useState("");
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const fetchBusArrival = useCallback(async () => {
+  const fetchBusArrival = useCallback(async (busService: string) => {
     try {
       const res1 = await Http.get({
         url: `${
           isPlatform("mobileweb") ? "https://cors-anywhere.herokuapp.com/" : ""
-        }${BUS_ARRIVAL_API}?BusStopCode=${busStop.BusStopCode}`,
+        }${BUS_ARRIVAL_API}?BusStopCode=${busService}`,
         headers: {
           ...LTA_ACCESSS_KEY,
         },
@@ -65,18 +70,18 @@ const BusArrivalDetail: React.FC<{ busStop: BusStopModel }> = ({ busStop }) => {
     } catch (error: any) {
       setError(error);
     }
-  }, [busStop.BusStopCode]);
+  }, []);
 
   useEffect(() => {
     setIsLoading(true);
-    fetchBusArrival().then(() => {
+    fetchBusArrival(busarrivalno).then(() => {
       setIsLoading(false);
     });
-  }, [fetchBusArrival]);
+  }, [fetchBusArrival, busarrivalno]);
 
   const refreshHandler = (event: CustomEvent<RefresherEventDetail>) => {
     setIsRefreshing(true);
-    fetchBusArrival().then(() => {
+    fetchBusArrival(busarrivalno).then(() => {
       event.detail.complete();
       setIsRefreshing(false);
     });
@@ -95,15 +100,7 @@ const BusArrivalDetail: React.FC<{ busStop: BusStopModel }> = ({ busStop }) => {
         </IonToolbar>
       </IonHeader>
 
-      <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">
-              {busStop.Description} - {busStop.BusStopCode}
-            </IonTitle>
-          </IonToolbar>
-        </IonHeader>
-
+      <IonContent>
         <IonRefresher
           slot="fixed"
           onIonRefresh={refreshHandler}
@@ -120,13 +117,17 @@ const BusArrivalDetail: React.FC<{ busStop: BusStopModel }> = ({ busStop }) => {
         {isLoading && <IonLoading isOpen={isLoading} message={"Loading..."} />}
 
         {!isLoading && busArrival.length > 0 && (
-          <Virtuoso
-            style={{ height: "100%" }}
-            data={busArrival}
-            totalCount={busArrival.length}
-            itemContent={(index, busArrival: BusArrivalModel) => {
+          <IonList>
+            {busArrival.map((busArrival, index) => {
+              const routeLink = `/busservices/${busArrival.ServiceNo}`;
+
               return (
-                <IonItem key={busArrival.ServiceNo}>
+                <IonItem
+                  key={index}
+                  routerLink={routeLink}
+                  routerDirection="forward"
+                  onClick={() => setBusStop(busArrival)}
+                >
                   <div className="arrival-item">
                     <div className="desc">{busArrival.ServiceNo}</div>
                     <div className="timing">
@@ -140,12 +141,11 @@ const BusArrivalDetail: React.FC<{ busStop: BusStopModel }> = ({ busStop }) => {
                         {diff_minutes(busArrival.NextBus3.EstimatedArrival)}
                       </div>
                     </div>
-                    {/* <div className="code">{busArrival.Operator}</div> */}
                   </div>
                 </IonItem>
               );
-            }}
-          />
+            })}
+          </IonList>
         )}
 
         {!isLoading && busArrival.length === 0 && (

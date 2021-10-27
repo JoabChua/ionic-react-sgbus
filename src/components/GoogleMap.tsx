@@ -22,12 +22,28 @@ const filterBusStops = (
   return filterbs;
 };
 
+const setOriginMarker = (
+  setCenterMarker: any,
+  center: { lat: number; lng: number },
+  map: google.maps.Map,
+) => {
+  setCenterMarker(() => [
+    new google.maps.Marker({
+      position: center,
+      map,
+      icon: {
+        url: "https://img.icons8.com/dusk/64/000000/marker.png",
+        scaledSize: new google.maps.Size(32, 32),
+      },
+    }),
+  ]);
+};
+
 const GoogleMap: React.FC<{
   coord: GoogleMapStartingPoint;
   setBusStopList(filterbs: BusStopModel[]): void;
-  fetchBusStops(): void;
   setCoord(coord: GoogleMapStartingPoint): void;
-}> = ({ coord, setBusStopList, fetchBusStops, setCoord }) => {
+}> = ({ coord, setBusStopList, setCoord }) => {
   const [gMap, setGMap] = useState<google.maps.Map>();
   const [centerMarker, setCenterMarker] = useState<google.maps.Marker[]>([]);
   const [busStopMarkers, setBusStopMarkers] = useState<google.maps.Marker[]>(
@@ -40,24 +56,18 @@ const GoogleMap: React.FC<{
   const renderMarkers = (map: google.maps.Map) => {
     setGMap(map);
 
-    let parseBusStops: BusStopModel[];
-    let filteredBS: BusStopModel[] = [];
-    const busstopstring = localStorage.getItem("allbusstops");
-    if (busstopstring) {
-      parseBusStops = JSON.parse(busstopstring);
-      setUnfilteredBusStops(parseBusStops);
-      if (parseBusStops.length === 5053) {
-        filteredBS = filterBusStops(parseBusStops, coord);
-        setBusStopList(filteredBS);
-      } else {
-        fetchBusStops();
-      }
-    } else {
-      fetchBusStops();
-    }
-    const bsMarkers: google.maps.Marker[] = [];
-    filteredBS.forEach((bs: BusStopModel) => {
-      bsMarkers.push(
+    let data: BusStopModel[] = require("../services/busstop.json");
+    setUnfilteredBusStops(() => {
+      const key = "BusStopCode";
+      return [...new Map(data.map((item) => [item[key], item])).values()];
+    });
+
+    const tempBusStopMarkers: google.maps.Marker[] = [];
+    let filteredBusStops = filterBusStops(data, coord);
+    setBusStopList(filteredBusStops);
+
+    filteredBusStops.forEach((bs: BusStopModel) => {
+      tempBusStopMarkers.push(
         new google.maps.Marker({
           position: { lat: bs.Latitude, lng: bs.Longitude },
           map,
@@ -68,18 +78,9 @@ const GoogleMap: React.FC<{
         }),
       );
     });
-    setBusStopMarkers(bsMarkers);
+    setBusStopMarkers(tempBusStopMarkers);
 
-    setCenterMarker(() => [
-      new google.maps.Marker({
-        position: coord.center,
-        map,
-        icon: {
-          url: "https://img.icons8.com/dusk/64/000000/marker.png",
-          scaledSize: new google.maps.Size(32, 32),
-        },
-      }),
-    ]);
+    setOriginMarker(setCenterMarker, coord.center, map);
   };
 
   const updateMarkers = (ev: google.maps.Map) => {
@@ -90,24 +91,20 @@ const GoogleMap: React.FC<{
     setCoord(newCoord);
 
     centerMarker.forEach((marker) => marker.setMap(null));
-    setCenterMarker(() => [
-      new google.maps.Marker({
-        position: { lat: ev.getCenter()!.lat(), lng: ev.getCenter()!.lng() },
-        map: gMap,
-        icon: {
-          url: "https://img.icons8.com/dusk/64/000000/marker.png",
-          scaledSize: new google.maps.Size(32, 32),
-        },
-      }),
-    ]);
-
     busStopMarkers.forEach((marker) => marker.setMap(null));
-    const bsMarkers: google.maps.Marker[] = [];
-    let filteredBS = filterBusStops(unfilteredBusStops, newCoord);
-    setBusStopList(filteredBS);
 
-    filteredBS.forEach((bs: BusStopModel) => {
-      bsMarkers.push(
+    setOriginMarker(
+      setCenterMarker,
+      { lat: ev.getCenter()!.lat(), lng: ev.getCenter()!.lng() },
+      gMap!,
+    );
+
+    const tempBusStopMarkers: google.maps.Marker[] = [];
+    let filteredBusStops = filterBusStops(unfilteredBusStops, newCoord);
+    setBusStopList(filteredBusStops);
+
+    filteredBusStops.forEach((bs: BusStopModel) => {
+      tempBusStopMarkers.push(
         new google.maps.Marker({
           position: { lat: bs.Latitude, lng: bs.Longitude },
           map: gMap,
@@ -118,7 +115,7 @@ const GoogleMap: React.FC<{
         }),
       );
     });
-    setBusStopMarkers(bsMarkers);
+    setBusStopMarkers(tempBusStopMarkers);
   };
 
   return (
