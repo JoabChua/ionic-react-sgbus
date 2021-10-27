@@ -10,15 +10,71 @@ import {
 } from "@ionic/react";
 import { Geolocation, Position } from "@capacitor/geolocation";
 import { useCallback, useEffect, useState } from "react";
-import GoogleMapReact from "google-map-react";
-import { MAP_KEY } from "../configs/bus.config";
+import { BUS_STOP_API, LTA_ACCESSS_KEY } from "../configs/bus.config";
 import "./BusArrival.scss";
+import { BusStopModel, BusStopReponseModel } from "../models/bus.model";
+import GoogleMap from "../components/GoogleMap";
+import BusStopList from "../components/BusStopList";
+import { Http } from "@capacitor-community/http";
+import { isPlatform } from "@ionic/react";
 
-const BusArrival: React.FC = () => {
+const fetchBusStopHelper = (num: number) => {
+  return Http.get({
+    url: `${
+      isPlatform("mobileweb") ? "https://cors-anywhere.herokuapp.com/" : ""
+    }${BUS_STOP_API}${num === 0 ? "" : `?$skip=${num}`}`,
+    headers: LTA_ACCESSS_KEY,
+  });
+};
+
+const BusArrival: React.FC<{ setBusStop(busStop: BusStopModel): void }> = ({
+  setBusStop,
+}) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [busStopLoading, setBusStopLoading] = useState(false);
+  const [busStops, setBusStops] = useState([] as BusStopModel[]);
   const [coord, setCoord] = useState<GoogleMapStartingPoint>(
     {} as GoogleMapStartingPoint,
   );
+  const [filteredBustops, setFilteredBustops] = useState<BusStopModel[]>([]);
+
+  const fetchBusStops = useCallback(async () => {
+    setBusStopLoading(true);
+    let isDoneFetching = false;
+    let count = 0;
+    try {
+      while (!isDoneFetching) {
+        const temp = await fetchBusStopHelper(count * 500);
+        if (temp.status !== 200) {
+          isDoneFetching = true;
+          throw new Error("Something went wrong!");
+        }
+        const data = temp.data as BusStopReponseModel;
+
+        if (data.value.length === 500) {
+          count++;
+          setBusStops((prev) => prev.concat(data.value));
+          setBusStopLoading(false);
+          // isDoneFetching = true;
+        } else {
+          setBusStops((prev) => prev.concat(data.value));
+          setBusStops((prev) => {
+            const key = "BusStopCode";
+            return [...new Map(prev.map((item) => [item[key], item])).values()];
+          });
+          isDoneFetching = true;
+        }
+      }
+    } catch (err: any) {
+      console.log(err);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (busStops.length === 5053) {
+      localStorage.setItem("allbusstops", JSON.stringify(busStops));
+    }
+  }, [busStops]);
 
   const fetchLocation = useCallback(async () => {
     setIsLoading(true);
@@ -52,26 +108,26 @@ const BusArrival: React.FC = () => {
         </IonToolbar>
       </IonHeader>
 
-      <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">Bus Arrival</IonTitle>
-          </IonToolbar>
-        </IonHeader>
+      <IonContent>
+        {isLoading && <IonLoading isOpen={isLoading} message={"Loading..."} />}
+
+        {busStopLoading && (
+          <IonLoading isOpen={busStopLoading} message={"Loading Data..."} />
+        )}
 
         <div className="map-container">
           {!isLoading && (
-            <GoogleMapReact
-              bootstrapURLKeys={{
-                key: MAP_KEY,
-              }}
-              defaultCenter={coord.center}
-              zoom={coord.zoom}
-              yesIWantToUseGoogleMapApiInternals={true}
-            ></GoogleMapReact>
+            <GoogleMap
+              coord={coord}
+              setBusStopList={setFilteredBustops}
+              fetchBusStops={fetchBusStops}
+              setCoord={setCoord}
+            />
           )}
-          {isLoading && (
-            <IonLoading isOpen={isLoading} message={"Loading..."} />
+        </div>
+        <div className="map-container">
+          {!busStopLoading && (
+            <BusStopList busStops={filteredBustops} setBusStop={setBusStop} />
           )}
         </div>
       </IonContent>
@@ -81,7 +137,7 @@ const BusArrival: React.FC = () => {
 
 export default BusArrival;
 
-interface GoogleMapStartingPoint {
+export interface GoogleMapStartingPoint {
   center: {
     lat: number;
     lng: number;
