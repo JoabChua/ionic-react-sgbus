@@ -1,6 +1,6 @@
 {
-	"appId": "io.ionic.starter",
-	"appName": "react-sg-journey",
-	"webDir": "build",
-	"bundledWebRuntime": false
+  "appId": "io.devjo.transport",
+  "appName": "transport-guardian",
+  "webDir": "build",
+  "bundledWebRuntime": false
 }
