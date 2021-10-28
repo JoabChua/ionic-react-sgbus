@@ -9,14 +9,17 @@ import {
   IonLoading,
   IonButton,
   IonIcon,
+  useIonRouter,
+  IonToast,
 } from "@ionic/react";
 import { Geolocation, Position } from "@capacitor/geolocation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import "./BusArrival.scss";
 import { BusStopModel } from "../models/bus.model";
 import GoogleMap from "../components/GoogleMap";
 import BusStopList from "../components/BusStopList";
 import { locateSharp } from "ionicons/icons";
+import { App } from "@capacitor/app";
 
 const BusArrival: React.FC<{ setBusStop(busStop: BusStopModel): void }> = ({
   setBusStop,
@@ -26,6 +29,8 @@ const BusArrival: React.FC<{ setBusStop(busStop: BusStopModel): void }> = ({
     {} as GoogleMapStartingPoint,
   );
   const [filteredBustops, setFilteredBustops] = useState<BusStopModel[]>([]);
+  const [showToast, setShowToast] = useState(false);
+  const lastTimePressBack = useRef(0);
 
   const fetchLocation = useCallback(async () => {
     setIsLoading(true);
@@ -51,6 +56,25 @@ const BusArrival: React.FC<{ setBusStop(busStop: BusStopModel): void }> = ({
       zoom: 16,
     });
   };
+
+  const ionRouter = useIonRouter();
+  let timePeriodToExit = 2200;
+
+  useEffect(() => {
+    document.addEventListener("ionBackButton", (ev: any) => {
+      if (!ionRouter.canGoBack()) {
+        if (
+          new Date().getTime() - lastTimePressBack.current <
+          timePeriodToExit
+        ) {
+          App.exitApp();
+        } else {
+          setShowToast(true);
+          lastTimePressBack.current = new Date().getTime();
+        }
+      }
+    });
+  }, []);
 
   return (
     <IonPage>
@@ -86,6 +110,13 @@ const BusArrival: React.FC<{ setBusStop(busStop: BusStopModel): void }> = ({
             <BusStopList busStops={filteredBustops} setBusStop={setBusStop} />
           )}
         </div>
+
+        <IonToast
+          isOpen={showToast}
+          message="Press back again to exit"
+          duration={2000}
+          onDidDismiss={() => setShowToast(false)}
+        />
       </IonContent>
     </IonPage>
   );
