@@ -50,6 +50,7 @@ const BusArrivalDetail: React.FC<{
   const [busArrival, setBusArrival] = useState<BusArrivalModel[]>(
     [] as BusArrivalModel[],
   );
+  const [localBusStopInfo, setlocalBusStopInfo] = useState<BusStopModel>();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -72,6 +73,10 @@ const BusArrivalDetail: React.FC<{
       const data = res1.data as BusArrivalResponseModel;
 
       setBusArrival(data.Services);
+
+      if (busStop) {
+        setlocalBusStopInfo(busStop);
+      }
     } catch (error: any) {
       setError("Failed to fetch information");
     }
@@ -87,8 +92,10 @@ const BusArrivalDetail: React.FC<{
   const refreshHandler = (event: CustomEvent<RefresherEventDetail>) => {
     setIsRefreshing(true);
     fetchBusArrival(busarrivalno).then(() => {
-      event.detail.complete();
-      setIsRefreshing(false);
+      setTimeout(() => {
+        event.detail.complete();
+        setIsRefreshing(false);
+      }, 500);
     });
   };
 
@@ -100,7 +107,7 @@ const BusArrivalDetail: React.FC<{
             <IonBackButton defaultHref="/busarrival" />
           </IonButtons>
           <IonTitle>
-            {busStop.Description} - {busStop.BusStopCode}
+            {localBusStopInfo?.Description} - {localBusStopInfo?.BusStopCode}
           </IonTitle>
         </IonToolbar>
       </IonHeader>
