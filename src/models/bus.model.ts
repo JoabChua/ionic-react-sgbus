@@ -37,6 +37,7 @@ export interface BusRouteModel {
   SUN_LastBus: string;
 
   Description?: string;
+  RoadName?: string;
 }
 
 export interface BusStopReponseModel {
