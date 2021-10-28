@@ -19,7 +19,7 @@ import {
   BusStopModel,
 } from "../models/bus.model";
 import "./BusServiceDetail.scss";
-import { swapVerticalOutline } from "ionicons/icons";
+import { arrowForward, swapVerticalOutline } from "ionicons/icons";
 import { useParams } from "react-router";
 
 const BusServiceDetail: React.FC<{
@@ -28,6 +28,9 @@ const BusServiceDetail: React.FC<{
 }> = ({ bus, setBusStop }) => {
   const { busno } = useParams<{ busno: string }>();
   const [busRoute, setBusRoute] = useState<BusRouteModel[]>(
+    [] as BusRouteModel[],
+  );
+  const [busRoute2, setBusRoute2] = useState<BusRouteModel[]>(
     [] as BusRouteModel[],
   );
   const [isLoading, setIsLoading] = useState(true);
@@ -49,15 +52,19 @@ const BusServiceDetail: React.FC<{
         data.some((br) => br.Direction === 1) &&
           data.some((br) => br.Direction === 2),
       );
+
       data.forEach((br: BusRouteModel) => {
         const findobj = busStops.find(
           (bs) => bs.BusStopCode === br.BusStopCode,
         );
         if (findobj) {
           br.Description = findobj?.Description;
+          br.RoadName = findobj?.RoadName;
         }
       });
-      setBusRoute(data);
+
+      setBusRoute(data.filter((busRoute1) => busRoute1.Direction === 1));
+      setBusRoute2(data.filter((busRoute2) => busRoute2.Direction === 2));
     } catch (error: any) {
       setError(error);
     }
@@ -75,7 +82,7 @@ const BusServiceDetail: React.FC<{
           <IonButtons slot="start">
             <IonBackButton defaultHref="/busservices" />
           </IonButtons>
-          <IonTitle>Bus No: {bus.ServiceNo}</IonTitle>
+          <IonTitle>Bus No: {busno}</IonTitle>
           {showDirChange && (
             <IonButtons slot="secondary">
               <IonButton
@@ -98,30 +105,58 @@ const BusServiceDetail: React.FC<{
         {!isLoading && !!error && <div>{error}</div>}
 
         {!isLoading && (
-          <IonList>
-            {busRoute.map((bus, index) => {
-              const routeLink = `/busarrival/${bus.BusStopCode}`;
-
-              return (
-                direction === bus.Direction && (
-                  <IonItem
-                    key={index}
-                    routerLink={routeLink}
-                    routerDirection="forward"
-                    onClick={() => setBusStop(bus)}
-                  >
-                    <div className="item">
-                      <div className="service">{bus.ServiceNo}</div>
-                      <div className="bus-desc">
-                        <div className="title">{bus.Description}</div>
-                        <div>{bus.BusStopCode}</div>
+          <div>
+            {
+              <div className="service-direction">
+                <span className="first">
+                  {" "}
+                  {direction === 1
+                    ? busRoute[0].Description
+                    : busRoute2[0].Description}
+                </span>
+                <IonIcon icon={arrowForward} />
+                <span className="last">
+                  {direction === 1
+                    ? busRoute[busRoute.length - 1].Description
+                    : busRoute2[busRoute2.length - 1].Description}
+                </span>
+              </div>
+            }
+            <IonList lines={"full"}>
+              {(direction === 1 ? busRoute : busRoute2).map((bus, index) => {
+                const routeLink = `/busarrival/${bus.BusStopCode}`;
+                return (
+                  direction === bus.Direction && (
+                    <IonItem
+                      key={index}
+                      routerLink={routeLink}
+                      routerDirection="forward"
+                      onClick={() => setBusStop(bus)}
+                    >
+                      <div className="item">
+                        <div className="bus-hour">
+                          <span>
+                            Mon-Fri:{bus.WD_FirstBus}-{bus.WD_LastBus}
+                          </span>
+                          <span>
+                            Sat:{bus.SAT_FirstBus}-{bus.SAT_LastBus}
+                          </span>
+                          <span>
+                            Sun:{bus.SUN_FirstBus}-{bus.SUN_LastBus}
+                          </span>
+                        </div>
+                        <div className="bus-desc">
+                          <div className="title">{bus.Description}</div>
+                          <div className="sub-title">{bus.RoadName}</div>
+                          <div className="code">{bus.BusStopCode}</div>
+                        </div>
                       </div>
-                    </div>
-                  </IonItem>
-                )
-              );
-            })}
-          </IonList>
+                    </IonItem>
+                  )
+                );
+              })}
+            </IonList>
+          </div>
         )}
       </IonContent>
     </IonPage>
