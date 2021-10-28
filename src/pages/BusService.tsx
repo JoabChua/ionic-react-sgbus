@@ -11,9 +11,10 @@ import {
   IonAlert,
   IonButton,
   IonIcon,
+  IonSearchbar,
 } from "@ionic/react";
 import { search } from "ionicons/icons";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   BUS_SERVICE_API,
   LTA_ACCESSS_KEY,
@@ -44,7 +45,13 @@ const compare = (a: BusServiceModel, b: BusServiceModel) => {
 const BusServices: React.FC<{ setBus(bus: BusServiceModel): void }> = ({
   setBus,
 }) => {
+  const searchRef = useRef<any>();
   const [busServices, setBusServices] = useState<BusServiceModel[]>([]);
+  const [unFilteredBusServices, setUnFilteredBusServices] = useState<
+    BusServiceModel[]
+  >([]);
+  const [searchText, setSearchText] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<any>();
 
@@ -78,6 +85,7 @@ const BusServices: React.FC<{ setBus(bus: BusServiceModel): void }> = ({
 
       data.sort(compare);
       setBusServices(data);
+      setUnFilteredBusServices(data);
     } catch (error: any) {
       setError(error);
     }
@@ -88,20 +96,57 @@ const BusServices: React.FC<{ setBus(bus: BusServiceModel): void }> = ({
     fetchBusStops();
   }, [fetchBusStops]);
 
+  const filterSearchResult = (val: string) => {
+    if (val === "") {
+      setBusServices(unFilteredBusServices);
+    }
+
+    setSearchText(val);
+    if (val && val.trim() !== "") {
+      setBusServices(
+        unFilteredBusServices.filter(
+          (busService) => busService.ServiceNo.indexOf(val) > -1,
+        ),
+      );
+    }
+  };
+
+  const showSearchAndFocus = () => {
+    setShowSearch(true);
+    setTimeout(() => {
+      searchRef.current.setFocus();
+    }, 300);
+  };
+
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
-          <IonButtons slot="start">
-            <IonMenuButton />
-          </IonButtons>
-          <IonTitle>Bus Services</IonTitle>
-          <IonButtons slot="secondary">
-            <IonButton>
-              <IonIcon slot="icon-only" icon={search} />
-            </IonButton>
-          </IonButtons>
-        </IonToolbar>
+        {!showSearch && (
+          <IonToolbar>
+            <IonButtons slot="start">
+              <IonMenuButton />
+            </IonButtons>
+            <IonTitle>Bus Services</IonTitle>
+            <IonButtons slot="secondary">
+              <IonButton onClick={() => showSearchAndFocus()}>
+                <IonIcon slot="icon-only" icon={search} />
+              </IonButton>
+            </IonButtons>
+          </IonToolbar>
+        )}
+        {showSearch && (
+          <IonToolbar>
+            <IonSearchbar
+              ref={searchRef}
+              value={searchText}
+              animated
+              debounce={300}
+              showCancelButton="always"
+              onIonCancel={() => setShowSearch(false)}
+              onIonChange={(e) => filterSearchResult(e.detail.value!)}
+            ></IonSearchbar>
+          </IonToolbar>
+        )}
       </IonHeader>
 
       <IonContent>
@@ -138,9 +183,14 @@ const BusServices: React.FC<{ setBus(bus: BusServiceModel): void }> = ({
             }}
           />
         )}
-        {!isLoading && busServices.length === 0 && (
+        {!isLoading && unFilteredBusServices.length === 0 && (
           <div className="refresh-wrapper">
             <IonButton shape="round">Refresh Page</IonButton>
+          </div>
+        )}
+        {!isLoading && busServices.length === 0 && (
+          <div className="no-result-found">
+            <h2>Try another search key!</h2>
           </div>
         )}
       </IonContent>
