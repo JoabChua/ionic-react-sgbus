@@ -77,6 +77,7 @@ const BusArrival: React.FC<{ setBusStop(busStop: BusStopModel): void }> = ({
               coord={coord}
               setBusStopList={setFilteredBustops}
               setCoord={setCoord}
+              setBusStop={setBusStop}
             />
           )}
         </div>

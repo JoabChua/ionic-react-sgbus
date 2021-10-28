@@ -11,9 +11,14 @@ import {
   IonRefresherContent,
   IonLoading,
   IonList,
+  IonAlert,
 } from "@ionic/react";
 import { useCallback, useEffect, useState } from "react";
-import { BUS_ARRIVAL_API, LTA_ACCESSS_KEY } from "../configs/bus.config";
+import {
+  BUS_ARRIVAL_API,
+  LTA_ACCESSS_KEY,
+  THINGS_PROXY,
+} from "../configs/bus.config";
 import {
   BusArrivalModel,
   BusArrivalResponseModel,
@@ -53,7 +58,7 @@ const BusArrivalDetail: React.FC<{
     try {
       const res1 = await Http.get({
         url: `${
-          isPlatform("mobileweb") ? "https://cors-anywhere.herokuapp.com/" : ""
+          isPlatform("mobileweb") ? THINGS_PROXY : ""
         }${BUS_ARRIVAL_API}?BusStopCode=${busService}`,
         headers: {
           ...LTA_ACCESSS_KEY,
@@ -68,7 +73,7 @@ const BusArrivalDetail: React.FC<{
 
       setBusArrival(data.Services);
     } catch (error: any) {
-      setError(error);
+      setError("Failed to fetch information");
     }
   }, []);
 
@@ -113,6 +118,14 @@ const BusArrivalDetail: React.FC<{
             refreshingText="Refreshing..."
           ></IonRefresherContent>
         </IonRefresher>
+
+        <IonAlert
+          isOpen={!!error}
+          onDidDismiss={() => setError("")}
+          header={"Error"}
+          message={error}
+          buttons={["OK"]}
+        />
 
         {isLoading && <IonLoading isOpen={isLoading} message={"Loading..."} />}
 
