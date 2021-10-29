@@ -137,35 +137,197 @@ const BusArrivalDetail: React.FC<{
         {isLoading && <IonLoading isOpen={isLoading} message={"Loading..."} />}
 
         {!isLoading && busArrival.length > 0 && (
-          <IonList>
-            {busArrival.map((busArrival, index) => {
-              const routeLink = `/busservices/${busArrival.ServiceNo}`;
+          <div>
+            <div className="legend-row">
+              <div className="legend-item">
+                <img
+                  src="assets/img/singledeck.png"
+                  alt="bus"
+                  width="20"
+                  height="20"
+                />
+                Single
+              </div>
+              <div className="legend-item">
+                <img
+                  src="assets/img/doubledeck.png"
+                  alt="bus"
+                  width="20"
+                  height="20"
+                />
+                Double
+              </div>
+              <div className="legend-item">
+                <img
+                  src="assets/img/bendy.png"
+                  alt="bus"
+                  width="20"
+                  height="20"
+                />
+                Bendy
+              </div>
+              <div className="legend-item">
+                <img
+                  src="assets/img/wheelchair.png"
+                  alt="bus"
+                  width="20"
+                  height="20"
+                />
+                Wheelchair
+              </div>
+            </div>
+            <IonList>
+              {busArrival.map((busArrival, index) => {
+                const routeLink = `/busservices/${busArrival.ServiceNo}`;
 
-              return (
-                <IonItem
-                  key={index}
-                  routerLink={routeLink}
-                  routerDirection="forward"
-                  onClick={() => setBusStop(busArrival)}
-                >
-                  <div className="arrival-item">
-                    <div className="desc">{busArrival.ServiceNo}</div>
-                    <div className="timing">
-                      <div className={"time " + busArrival.NextBus.Load}>
-                        {diff_minutes(busArrival.NextBus.EstimatedArrival)}
-                      </div>
-                      <div className={"time " + busArrival.NextBus2.Load}>
-                        {diff_minutes(busArrival.NextBus2.EstimatedArrival)}
-                      </div>
-                      <div className={"time " + busArrival.NextBus3.Load}>
-                        {diff_minutes(busArrival.NextBus3.EstimatedArrival)}
+                return (
+                  <IonItem
+                    key={index}
+                    routerLink={routeLink}
+                    routerDirection="forward"
+                    onClick={() => setBusStop(busArrival)}
+                  >
+                    <div className="arrival-item">
+                      <div className="desc">{busArrival.ServiceNo}</div>
+                      <div className="timing">
+                        <div className="time-icon">
+                          <div className={"time " + busArrival.NextBus.Load}>
+                            {diff_minutes(busArrival.NextBus.EstimatedArrival)}
+                          </div>
+                          {diff_minutes(busArrival.NextBus.EstimatedArrival) !==
+                            "NA" && (
+                            <span className="additional-icon">
+                              {busArrival.NextBus.Feature === "WAB" && (
+                                <img
+                                  src="assets/img/wheelchair.png"
+                                  alt="wc"
+                                  width="20"
+                                  height="20"
+                                />
+                              )}
+                              {!busArrival.NextBus.Feature && "-"}
+                              {busArrival.NextBus.Type === "SD" && (
+                                <img
+                                  src="assets/img/singledeck.png"
+                                  alt="bus"
+                                  width="20"
+                                  height="20"
+                                />
+                              )}
+                              {busArrival.NextBus.Type === "DD" && (
+                                <img
+                                  src="assets/img/doubledeck.png"
+                                  alt="bus"
+                                  width="20"
+                                  height="20"
+                                />
+                              )}
+                              {busArrival.NextBus.Type === "BD" && (
+                                <img
+                                  src="assets/img/bendy.png"
+                                  alt="bus"
+                                  width="20"
+                                  height="20"
+                                />
+                              )}
+                            </span>
+                          )}
+                        </div>
+                        <div className="time-icon">
+                          <div className={"time " + busArrival.NextBus2.Load}>
+                            {diff_minutes(busArrival.NextBus2.EstimatedArrival)}
+                          </div>
+                          {diff_minutes(
+                            busArrival.NextBus2.EstimatedArrival,
+                          ) !== "NA" && (
+                            <span className="additional-icon">
+                              {busArrival.NextBus2.Feature === "WAB" && (
+                                <img
+                                  src="assets/img/wheelchair.png"
+                                  alt="wc"
+                                  width="20"
+                                  height="20"
+                                />
+                              )}
+                              {!busArrival.NextBus2.Feature && "-"}
+                              {busArrival.NextBus2.Type === "SD" && (
+                                <img
+                                  src="assets/img/singledeck.png"
+                                  alt="bus"
+                                  width="20"
+                                  height="20"
+                                />
+                              )}
+                              {busArrival.NextBus2.Type === "DD" && (
+                                <img
+                                  src="assets/img/doubledeck.png"
+                                  alt="bus"
+                                  width="20"
+                                  height="20"
+                                />
+                              )}
+                              {busArrival.NextBus2.Type === "BD" && (
+                                <img
+                                  src="assets/img/bendy.png"
+                                  alt="bus"
+                                  width="20"
+                                  height="20"
+                                />
+                              )}
+                            </span>
+                          )}
+                        </div>
+                        <div className="time-icon">
+                          <div className={"time " + busArrival.NextBus3.Load}>
+                            {diff_minutes(busArrival.NextBus3.EstimatedArrival)}
+                          </div>
+                          {diff_minutes(
+                            busArrival.NextBus3.EstimatedArrival,
+                          ) !== "NA" && (
+                            <span className="additional-icon">
+                              {busArrival.NextBus3.Feature === "WAB" && (
+                                <img
+                                  src="assets/img/wheelchair.png"
+                                  alt="wc"
+                                  width="20"
+                                  height="20"
+                                />
+                              )}
+                              {!busArrival.NextBus3.Feature && "-"}
+                              {busArrival.NextBus3.Type === "SD" && (
+                                <img
+                                  src="assets/img/singledeck.png"
+                                  alt="bus"
+                                  width="20"
+                                  height="20"
+                                />
+                              )}
+                              {busArrival.NextBus3.Type === "DD" && (
+                                <img
+                                  src="assets/img/doubledeck.png"
+                                  alt="bus"
+                                  width="20"
+                                  height="20"
+                                />
+                              )}
+                              {busArrival.NextBus3.Type === "BD" && (
+                                <img
+                                  src="assets/img/bendy.png"
+                                  alt="bus"
+                                  width="20"
+                                  height="20"
+                                />
+                              )}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </IonItem>
-              );
-            })}
-          </IonList>
+                  </IonItem>
+                );
+              })}
+            </IonList>
+          </div>
         )}
 
         {!isLoading && busArrival.length === 0 && (

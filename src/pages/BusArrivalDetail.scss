@@ -18,6 +18,22 @@
     font-weight: 900;
     height: 24px;
   }
+
+  .time-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .additional-icon {
+      display: flex;
+      margin-top: 4px;
+
+      img {
+        margin: 0 4px;
+      }
+    }
+  }
 }
 
 .arrival-item {
@@ -61,4 +77,18 @@
   padding: 40px;
   font-size: 20px;
   font-weight: 900;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin: 0 8px;
+  font-size: 13px;
+}
+
+.legend-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--ion-item-background, var(--ion-background-color, #fff));
 }
