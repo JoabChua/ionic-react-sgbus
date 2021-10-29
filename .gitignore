@@ -7,6 +7,8 @@
 /src/configs/
 /android
 /ios
+/resources
+/public
 
 # testing
 /coverage
