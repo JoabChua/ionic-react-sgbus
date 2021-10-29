@@ -157,11 +157,10 @@ const GoogleMap: React.FC<{
     setCoord(newCoord);
 
     if (centerMarker) {
-      centerMarker.setMap(null);
+      centerMarker.setPosition(newCenter);
     }
-    busStopMarkers.forEach((marker) => marker.setMap(null));
 
-    setOriginMarker(setCenterMarker, newCenter, gMap!);
+    busStopMarkers.forEach((marker) => marker.setMap(null));
     filterBusListAndUpdateBusMarkers(
       unfilteredBusStops,
       newCoord,
@@ -171,6 +170,16 @@ const GoogleMap: React.FC<{
       setBusStop,
       history,
     );
+  };
+
+  const updateMarker = (ev: google.maps.Map) => {
+    const newCenter = {
+      lat: ev.getCenter()!.lat(),
+      lng: ev.getCenter()!.lng(),
+    };
+    if (centerMarker) {
+      centerMarker.setPosition(newCenter);
+    }
   };
 
   return (
@@ -196,6 +205,7 @@ const GoogleMap: React.FC<{
       zoom={coord.zoom}
       yesIWantToUseGoogleMapApiInternals
       onGoogleApiLoaded={({ map, maps }) => renderMarkers(map, maps)}
+      onDrag={updateMarker}
     ></GoogleMapReact>
   );
 };
