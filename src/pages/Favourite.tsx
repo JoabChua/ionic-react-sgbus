@@ -22,7 +22,7 @@ const Favourite: React.FC = () => {
       </IonHeader>
 
       <IonContent>
-        <h1>Coming Soon</h1>
+        <div className="no-info">Coming Soon</div>
       </IonContent>
     </IonPage>
   );

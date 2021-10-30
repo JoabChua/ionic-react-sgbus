@@ -20,6 +20,7 @@ import GoogleMap from "../components/GoogleMap";
 import BusStopList from "../components/BusStopList";
 import { locateSharp } from "ionicons/icons";
 import { App } from "@capacitor/app";
+import { SplashScreen } from "@capacitor/splash-screen";
 
 const BusArrival: React.FC<{ setBusStop(busStop: BusStopModel): void }> = ({
   setBusStop,
@@ -61,6 +62,7 @@ const BusArrival: React.FC<{ setBusStop(busStop: BusStopModel): void }> = ({
   let timePeriodToExit = 2200;
 
   useEffect(() => {
+    SplashScreen.hide();
     document.addEventListener("ionBackButton", (ev: any) => {
       if (!ionRouter.canGoBack()) {
         if (
