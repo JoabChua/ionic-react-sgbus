@@ -55,15 +55,15 @@
 }
 
 .SEA {
-  background-color: #56c356 !important;
+  background-color: #56c356;
 }
 
 .SDA {
-  background-color: #ff9800 !important;
+  background-color: #ff9800;
 }
 
 .LSD {
-  background-color: red !important;
+  background-color: red;
 }
 
 .refresh {
@@ -87,6 +87,7 @@
 }
 
 .legend-row {
+  padding-top: 12px;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -1,26 +1,23 @@
 import {
   IonContent,
+  IonFooter,
+  IonHeader,
   IonIcon,
   IonItem,
   IonLabel,
   IonList,
-  IonListHeader,
   IonMenu,
   IonMenuToggle,
-  IonNote,
+  IonToolbar,
 } from "@ionic/react";
 
 import { useLocation } from "react-router-dom";
 import {
   busOutline,
   busSharp,
-  personCircleOutline,
-  personCircleSharp,
   starSharp,
   timeOutline,
   timeSharp,
-  trainOutline,
-  trainSharp,
 } from "ionicons/icons";
 import "./Menu.scss";
 
@@ -45,17 +42,17 @@ const appPages: AppPage[] = [
     mdIcon: busSharp,
   },
   {
-    title: "Favorite",
+    title: "Favourite",
     url: "/fav",
     iosIcon: starSharp,
     mdIcon: starSharp,
   },
-  {
-    title: "About Us",
-    url: "/aboutus",
-    iosIcon: personCircleOutline,
-    mdIcon: personCircleSharp,
-  },
+  // {
+  //   title: "About Us",
+  //   url: "/aboutus",
+  //   iosIcon: personCircleOutline,
+  //   mdIcon: personCircleSharp,
+  // },
 ];
 
 const Menu: React.FC = () => {
@@ -63,10 +60,16 @@ const Menu: React.FC = () => {
 
   return (
     <IonMenu contentId="main" type="overlay">
-      <IonContent>
+      <IonHeader className="menu-header">
+        <IonToolbar>
+          <div className="toolbar-custom">
+            <img src="assets/img/icon.png" alt="bus" width="50" height="50" />
+            <IonLabel>SG Transport Guardian</IonLabel>
+          </div>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent className="ion-no-padding">
         <IonList id="inbox-list">
-          <IonListHeader>SG Transport Guardian</IonListHeader>
-          <IonNote>Fun & Cute</IonNote>
           {appPages.map((appPage, index) => {
             return (
               <IonMenuToggle key={index} autoHide={false}>
@@ -91,6 +94,12 @@ const Menu: React.FC = () => {
           })}
         </IonList>
       </IonContent>
+      <IonFooter>
+        <IonToolbar>
+          <div className="email-add">Developed By: Joab Chua</div>
+          <div className="copyright">Copyright 2021</div>
+        </IonToolbar>
+      </IonFooter>
     </IonMenu>
   );
 };

@@ -7,6 +7,7 @@ import {
   IonTitle,
   IonContent,
 } from "@ionic/react";
+import "./AboutUs.scss";
 
 const AboutUs: React.FC = () => {
   return (
@@ -21,7 +22,16 @@ const AboutUs: React.FC = () => {
       </IonHeader>
 
       <IonContent>
-        <h1>Coming Soon</h1>
+        <div className="main-content">
+          <div className="info-row">
+            <div className="title">App Data</div>:{" "}
+            <div className="info">LTA Singapore</div>
+          </div>
+          <div className="info-row">
+            <div className="title">App Developer</div>:{" "}
+            <div className="info">Joab Chua</div>
+          </div>
+        </div>
       </IonContent>
     </IonPage>
   );
