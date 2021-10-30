@@ -2,5 +2,16 @@
   "appId": "io.devjo.transport",
   "appName": "transport-guardian",
   "webDir": "build",
-  "bundledWebRuntime": false
+  "bundledWebRuntime": false,
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false,
+      "androidSplashResourceName": "splash",
+      "showSpinner": true,
+      "androidSpinnerStyle": "small",
+      "iosSpinnerStyle": "small",
+      "spinnerColor": "#999999",
+      "layoutName": "launch_screen"
+    }
+  }
 }
