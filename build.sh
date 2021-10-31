@@ -13,3 +13,6 @@ ionic cap sync
 echo "Opening android studio.\n\n"
 
 ionic cap open android
+
+# for live reload
+# ionic cap run android -l --external
