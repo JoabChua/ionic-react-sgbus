@@ -7,8 +7,8 @@
     "SplashScreen": {
       "launchAutoHide": false,
       "androidSplashResourceName": "splash",
-      "showSpinner": true,
-      "androidSpinnerStyle": "small",
+      "showSpinner": false,
+      "androidSpinnerStyle": "large",
       "iosSpinnerStyle": "small",
       "spinnerColor": "#999999",
       "layoutName": "launch_screen"
