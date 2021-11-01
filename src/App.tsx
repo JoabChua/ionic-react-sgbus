@@ -43,7 +43,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <IonApp>
+    <IonApp style={{ height: "calc(100% - 60px)" }}>
       <IonReactRouter>
         <IonSplitPane contentId="main">
           <Menu />

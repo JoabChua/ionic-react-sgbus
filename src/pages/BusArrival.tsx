@@ -21,6 +21,12 @@ import BusStopList from "../components/BusStopList";
 import { locateSharp } from "ionicons/icons";
 import { App } from "@capacitor/app";
 import { SplashScreen } from "@capacitor/splash-screen";
+import {
+  AdMob,
+  BannerAdOptions,
+  BannerAdSize,
+  BannerAdPosition,
+} from "@capacitor-community/admob";
 
 const BusArrival: React.FC<{ setBusStop(busStop: BusStopModel): void }> = ({
   setBusStop,
@@ -63,6 +69,19 @@ const BusArrival: React.FC<{ setBusStop(busStop: BusStopModel): void }> = ({
 
   useEffect(() => {
     SplashScreen.hide();
+    AdMob.initialize({
+      requestTrackingAuthorization: true,
+      testingDevices: [""],
+      initializeForTesting: true,
+    });
+    const options: BannerAdOptions = {
+      adId: "ca-app-pub-6451703586668878/7345039996",
+      adSize: BannerAdSize.ADAPTIVE_BANNER,
+      position: BannerAdPosition.BOTTOM_CENTER,
+      margin: 0,
+      isTesting: true,
+    };
+    AdMob.showBanner(options);
     document.addEventListener("ionBackButton", (ev: any) => {
       if (!ionRouter.canGoBack()) {
         if (
