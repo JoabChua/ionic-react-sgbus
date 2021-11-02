@@ -113,7 +113,8 @@ const GoogleMap: React.FC<{
   setBusStopList(filterbs: BusStopModel[]): void;
   setCoord(coord: GoogleMapStartingPoint): void;
   setBusStop(busStop: BusStopModel): void;
-}> = ({ coord, setBusStopList, setCoord, setBusStop }) => {
+  watchCoord: GoogleMapStartingPoint;
+}> = ({ coord, setBusStopList, setCoord, setBusStop, watchCoord }) => {
   const history = useHistory();
   const [gMap, setGMap] = useState<google.maps.Map>();
   const [centerMarker, setCenterMarker] = useState<google.maps.Marker>();
@@ -143,6 +144,16 @@ const GoogleMap: React.FC<{
       setBusStop,
       history,
     );
+
+    new google.maps.Marker({
+      position: watchCoord.center,
+      map,
+      animation: 1,
+      icon: {
+        url: "assets/img/circle.png",
+        scaledSize: new google.maps.Size(24, 24),
+      },
+    });
   };
 
   const onDragEndHandler = (ev: google.maps.Map) => {
