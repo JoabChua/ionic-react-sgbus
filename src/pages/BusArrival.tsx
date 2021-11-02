@@ -12,7 +12,11 @@ import {
   useIonRouter,
   IonToast,
 } from "@ionic/react";
-import { Geolocation, Position } from "@capacitor/geolocation";
+import {
+  Geolocation,
+  PermissionStatus,
+  Position,
+} from "@capacitor/geolocation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import "./BusArrival.scss";
 import { BusStopModel } from "../models/bus.model";
@@ -27,6 +31,7 @@ import {
   BannerAdSize,
   BannerAdPosition,
 } from "@capacitor-community/admob";
+import { isPlatform } from "@ionic/react";
 
 const BusArrival: React.FC<{ setBusStop(busStop: BusStopModel): void }> = ({
   setBusStop,
@@ -35,9 +40,13 @@ const BusArrival: React.FC<{ setBusStop(busStop: BusStopModel): void }> = ({
   const [coord, setCoord] = useState<GoogleMapStartingPoint>(
     {} as GoogleMapStartingPoint,
   );
+  const [watchCoord, setWatchCoord] = useState<GoogleMapStartingPoint>(
+    {} as GoogleMapStartingPoint,
+  );
   const [filteredBustops, setFilteredBustops] = useState<BusStopModel[]>([]);
   const [showToast, setShowToast] = useState(false);
   const lastTimePressBack = useRef(0);
+  const watchIds = useRef<string[]>([]);
 
   const fetchLocation = useCallback(async () => {
     setIsLoading(true);
@@ -54,14 +63,76 @@ const BusArrival: React.FC<{ setBusStop(busStop: BusStopModel): void }> = ({
   }, [fetchLocation]);
 
   const getCurrentLocation = async () => {
-    const geolocation: Position = await Geolocation.getCurrentPosition();
-    setCoord({
-      center: {
-        lat: geolocation.coords.latitude,
-        lng: geolocation.coords.longitude,
-      },
-      zoom: 16,
-    });
+    const currentPermission: PermissionStatus =
+      await Geolocation.checkPermissions();
+    if (isPlatform("mobileweb")) {
+      const geolocation: Position = await Geolocation.getCurrentPosition();
+      setCoord({
+        center: {
+          lat: geolocation.coords.latitude,
+          lng: geolocation.coords.longitude,
+        },
+        zoom: 16,
+      });
+    } else {
+      if (
+        currentPermission.location === "prompt" ||
+        currentPermission.location === "prompt-with-rationale"
+      ) {
+        const getPermission = await Geolocation.requestPermissions();
+        if (getPermission.location === "granted") {
+          const geolocation: Position = await Geolocation.getCurrentPosition();
+          setCoord({
+            center: {
+              lat: geolocation.coords.latitude,
+              lng: geolocation.coords.longitude,
+            },
+            zoom: 16,
+          });
+          const watchId = await Geolocation.watchPosition(
+            { enableHighAccuracy: true },
+            (pos) => {
+              const newPos = pos as Position;
+              setWatchCoord({
+                center: {
+                  lat: newPos.coords.latitude,
+                  lng: newPos.coords.longitude,
+                },
+                zoom: 16,
+              });
+            },
+          );
+          watchIds.current.push(watchId);
+        }
+      } else if (currentPermission.location === "granted") {
+        const geolocation: Position = await Geolocation.getCurrentPosition();
+        setCoord({
+          center: {
+            lat: geolocation.coords.latitude,
+            lng: geolocation.coords.longitude,
+          },
+          zoom: 16,
+        });
+        const watchId = await Geolocation.watchPosition(
+          { enableHighAccuracy: true },
+          (pos) => {
+            const newPos = pos as Position;
+            setWatchCoord({
+              center: {
+                lat: newPos.coords.latitude,
+                lng: newPos.coords.longitude,
+              },
+              zoom: 16,
+            });
+          },
+        );
+        watchIds.current.push(watchId);
+      } else {
+        alert(
+          "Please go to Settings > Location Permission, to allow location for this application, for the app to work.",
+        );
+      }
+    }
   };
 
   const ionRouter = useIonRouter();
@@ -79,15 +150,16 @@ const BusArrival: React.FC<{ setBusStop(busStop: BusStopModel): void }> = ({
       adSize: BannerAdSize.ADAPTIVE_BANNER,
       position: BannerAdPosition.BOTTOM_CENTER,
       margin: 0,
-      isTesting: true,
+      // isTesting: true,
     };
     AdMob.showBanner(options);
-    document.addEventListener("ionBackButton", (ev: any) => {
+    document.addEventListener("ionBackButton", () => {
       if (!ionRouter.canGoBack()) {
         if (
           new Date().getTime() - lastTimePressBack.current <
           timePeriodToExit
         ) {
+          watchIds.current.forEach((id) => Geolocation.clearWatch({ id }));
           App.exitApp();
         } else {
           setShowToast(true);
@@ -123,6 +195,7 @@ const BusArrival: React.FC<{ setBusStop(busStop: BusStopModel): void }> = ({
               setBusStopList={setFilteredBustops}
               setCoord={setCoord}
               setBusStop={setBusStop}
+              watchCoord={watchCoord}
             />
           )}
         </div>
