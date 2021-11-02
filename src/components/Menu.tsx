@@ -15,6 +15,7 @@ import { useLocation } from "react-router-dom";
 import {
   busOutline,
   busSharp,
+  cashOutline,
   starSharp,
   timeOutline,
   timeSharp,
@@ -55,7 +56,10 @@ const appPages: AppPage[] = [
   // },
 ];
 
-const Menu: React.FC = () => {
+const Menu: React.FC<{ showAds: boolean; setAds(ads: boolean): void }> = ({
+  showAds,
+  setAds,
+}) => {
   const location = useLocation();
 
   return (
@@ -92,6 +96,10 @@ const Menu: React.FC = () => {
               </IonMenuToggle>
             );
           })}
+          <IonItem onClick={() => setAds(!showAds)} lines="none">
+            <IonIcon slot="start" icon={cashOutline} />
+            <IonLabel>{showAds ? "Hide" : "Show"} Ads</IonLabel>
+          </IonItem>
         </IonList>
       </IonContent>
       <IonFooter>

@@ -25,14 +25,29 @@ import BusArrival from "./pages/BusArrival";
 import Favourite from "./pages/Favourite";
 import AboutUs from "./pages/AboutUs";
 import BusServiceDetail from "./pages/BusServiceDetail";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BusServiceModel, BusStopModel } from "./models/bus.model";
 import BusServices from "./pages/BusService";
 import BusArrivalDetail from "./pages/BusArrivalDetail";
+import {
+  AdMob,
+  BannerAdOptions,
+  BannerAdSize,
+  BannerAdPosition,
+} from "@capacitor-community/admob";
+
+const bannerOptions: BannerAdOptions = {
+  adId: "ca-app-pub-6451703586668878/7345039996",
+  adSize: BannerAdSize.ADAPTIVE_BANNER,
+  position: BannerAdPosition.BOTTOM_CENTER,
+  margin: 0,
+  // isTesting: true,
+};
 
 const App: React.FC = () => {
   const [selectedBus, setSelectedBus] = useState({} as BusServiceModel);
   const [selectedBusStop, setSelectedBusStop] = useState({} as BusStopModel);
+  const [showAds, setShowAds] = useState(false);
 
   const setBusHandler = (bus: BusServiceModel) => {
     setSelectedBus(bus);
@@ -42,11 +57,28 @@ const App: React.FC = () => {
     setSelectedBusStop(busStop);
   };
 
+  const toggleAds = (adsBool: boolean) => {
+    setShowAds(adsBool);
+    if (adsBool) {
+      AdMob.showBanner(bannerOptions);
+    } else {
+      AdMob.removeBanner();
+    }
+  };
+
+  useEffect(() => {
+    AdMob.initialize({
+      requestTrackingAuthorization: true,
+      // testingDevices: [""],
+      // initializeForTesting: true,
+    });
+  }, []);
+
   return (
-    <IonApp style={{ height: "calc(100% - 60px)" }}>
+    <IonApp style={{ height: showAds ? "calc(100% - 60px)" : "100%" }}>
       <IonReactRouter>
         <IonSplitPane contentId="main">
-          <Menu />
+          <Menu showAds={showAds} setAds={toggleAds} />
           <IonRouterOutlet id="main">
             <Route path="/" exact={true}>
               <Redirect to="/busarrival" />
