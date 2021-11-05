@@ -12,7 +12,7 @@ ionic cap sync
 
 echo "Opening apple.\n\n"
 
-ionic cap open xcode
+ionic cap open ios
 
 # for live reload
 # ionic cap run android -l --external
