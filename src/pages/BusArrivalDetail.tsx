@@ -12,7 +12,6 @@ import {
   IonLoading,
   IonList,
   IonAlert,
-  IonLabel,
   IonIcon,
 } from "@ionic/react";
 import { useCallback, useEffect, useState } from "react";
@@ -36,17 +35,6 @@ import { Http } from "@capacitor-community/http";
 import { isPlatform } from "@ionic/react";
 import { useParams } from "react-router";
 import TimeArrival from "../components/TimeArrival";
-
-const diff_minutes = (dt1: string) => {
-  if (dt1 === "") {
-    return "NA";
-  }
-  var diff = (new Date().getTime() - new Date(dt1).getTime()) / 1000;
-  diff /= 60;
-  return Math.abs(Math.round(diff))
-    ? Math.abs(Math.round(diff)) + " mins"
-    : "Arr";
-};
 
 const BusArrivalDetail: React.FC<{
   busStop: BusStopModel;
