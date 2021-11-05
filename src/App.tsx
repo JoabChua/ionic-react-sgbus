@@ -71,6 +71,8 @@ const App: React.FC = () => {
       requestTrackingAuthorization: true,
       // testingDevices: [""],
       // initializeForTesting: true,
+    }).then(() => {
+      AdMob.showBanner(bannerOptions);
     });
   }, []);
 
