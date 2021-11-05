@@ -12,6 +12,8 @@ import {
   IonLoading,
   IonList,
   IonAlert,
+  IonLabel,
+  IonIcon,
 } from "@ionic/react";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -25,11 +27,15 @@ import {
   BusStopModel,
 } from "../models/bus.model";
 import "./BusArrivalDetail.scss";
-import { chevronDownCircleOutline } from "ionicons/icons";
+import {
+  arrowDownCircleOutline,
+  chevronDownCircleOutline,
+} from "ionicons/icons";
 import { RefresherEventDetail } from "@ionic/core";
 import { Http } from "@capacitor-community/http";
 import { isPlatform } from "@ionic/react";
 import { useParams } from "react-router";
+import TimeArrival from "../components/TimeArrival";
 
 const diff_minutes = (dt1: string) => {
   if (dt1 === "") {
@@ -190,143 +196,19 @@ const BusArrivalDetail: React.FC<{
                     <div className="arrival-item">
                       <div className="desc">{busArrival.ServiceNo}</div>
                       <div className="timing">
-                        <div className="time-icon">
-                          <div className={"time " + busArrival.NextBus.Load}>
-                            {diff_minutes(busArrival.NextBus.EstimatedArrival)}
-                          </div>
-                          {diff_minutes(busArrival.NextBus.EstimatedArrival) !==
-                            "NA" && (
-                            <span className="additional-icon">
-                              {busArrival.NextBus.Feature === "WAB" && (
-                                <img
-                                  src="assets/img/wheelchair.png"
-                                  alt="wc"
-                                  width="20"
-                                  height="20"
-                                />
-                              )}
-                              {!busArrival.NextBus.Feature && "-"}
-                              {busArrival.NextBus.Type === "SD" && (
-                                <img
-                                  src="assets/img/singledeck.png"
-                                  alt="bus"
-                                  width="20"
-                                  height="20"
-                                />
-                              )}
-                              {busArrival.NextBus.Type === "DD" && (
-                                <img
-                                  src="assets/img/doubledeck.png"
-                                  alt="bus"
-                                  width="20"
-                                  height="20"
-                                />
-                              )}
-                              {busArrival.NextBus.Type === "BD" && (
-                                <img
-                                  src="assets/img/bendy.png"
-                                  alt="bus"
-                                  width="20"
-                                  height="20"
-                                />
-                              )}
-                            </span>
-                          )}
-                        </div>
-                        <div className="time-icon">
-                          <div className={"time " + busArrival.NextBus2.Load}>
-                            {diff_minutes(busArrival.NextBus2.EstimatedArrival)}
-                          </div>
-                          {diff_minutes(
-                            busArrival.NextBus2.EstimatedArrival,
-                          ) !== "NA" && (
-                            <span className="additional-icon">
-                              {busArrival.NextBus2.Feature === "WAB" && (
-                                <img
-                                  src="assets/img/wheelchair.png"
-                                  alt="wc"
-                                  width="20"
-                                  height="20"
-                                />
-                              )}
-                              {!busArrival.NextBus2.Feature && "-"}
-                              {busArrival.NextBus2.Type === "SD" && (
-                                <img
-                                  src="assets/img/singledeck.png"
-                                  alt="bus"
-                                  width="20"
-                                  height="20"
-                                />
-                              )}
-                              {busArrival.NextBus2.Type === "DD" && (
-                                <img
-                                  src="assets/img/doubledeck.png"
-                                  alt="bus"
-                                  width="20"
-                                  height="20"
-                                />
-                              )}
-                              {busArrival.NextBus2.Type === "BD" && (
-                                <img
-                                  src="assets/img/bendy.png"
-                                  alt="bus"
-                                  width="20"
-                                  height="20"
-                                />
-                              )}
-                            </span>
-                          )}
-                        </div>
-                        <div className="time-icon">
-                          <div className={"time " + busArrival.NextBus3.Load}>
-                            {diff_minutes(busArrival.NextBus3.EstimatedArrival)}
-                          </div>
-                          {diff_minutes(
-                            busArrival.NextBus3.EstimatedArrival,
-                          ) !== "NA" && (
-                            <span className="additional-icon">
-                              {busArrival.NextBus3.Feature === "WAB" && (
-                                <img
-                                  src="assets/img/wheelchair.png"
-                                  alt="wc"
-                                  width="20"
-                                  height="20"
-                                />
-                              )}
-                              {!busArrival.NextBus3.Feature && "-"}
-                              {busArrival.NextBus3.Type === "SD" && (
-                                <img
-                                  src="assets/img/singledeck.png"
-                                  alt="bus"
-                                  width="20"
-                                  height="20"
-                                />
-                              )}
-                              {busArrival.NextBus3.Type === "DD" && (
-                                <img
-                                  src="assets/img/doubledeck.png"
-                                  alt="bus"
-                                  width="20"
-                                  height="20"
-                                />
-                              )}
-                              {busArrival.NextBus3.Type === "BD" && (
-                                <img
-                                  src="assets/img/bendy.png"
-                                  alt="bus"
-                                  width="20"
-                                  height="20"
-                                />
-                              )}
-                            </span>
-                          )}
-                        </div>
+                        <TimeArrival NextBus={busArrival.NextBus} />
+                        <TimeArrival NextBus={busArrival.NextBus2} />
+                        <TimeArrival NextBus={busArrival.NextBus3} />
                       </div>
                     </div>
                   </IonItem>
                 );
               })}
             </IonList>
+            <div className="refresh-text">
+              <IonIcon icon={arrowDownCircleOutline} />
+              Pull down to refresh
+            </div>
           </div>
         )}
 
