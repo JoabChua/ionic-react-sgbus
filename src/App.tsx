@@ -47,7 +47,7 @@ const bannerOptions: BannerAdOptions = {
 const App: React.FC = () => {
   const [selectedBus, setSelectedBus] = useState({} as BusServiceModel);
   const [selectedBusStop, setSelectedBusStop] = useState({} as BusStopModel);
-  const [showAds, setShowAds] = useState(false);
+  const [showAds, setShowAds] = useState(true);
 
   const setBusHandler = (bus: BusServiceModel) => {
     setSelectedBus(bus);
