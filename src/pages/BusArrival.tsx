@@ -68,6 +68,20 @@ const BusArrival: React.FC<{ setBusStop(busStop: BusStopModel): void }> = ({
         },
         zoom: 16,
       });
+      const watchId = await Geolocation.watchPosition(
+        { enableHighAccuracy: true },
+        (pos) => {
+          const newPos = pos as Position;
+          setWatchCoord({
+            center: {
+              lat: newPos.coords.latitude,
+              lng: newPos.coords.longitude,
+            },
+            zoom: 16,
+          });
+        },
+      );
+      watchIds.current.push(watchId);
     } else {
       if (
         currentPermission.location === "prompt" ||

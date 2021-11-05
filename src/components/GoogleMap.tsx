@@ -1,5 +1,5 @@
 import GoogleMapReact from "google-map-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router";
 import { BKUP_MAP_KEY } from "../configs/bus.config";
 import { BusStopModel } from "../models/bus.model";
@@ -118,6 +118,7 @@ const GoogleMap: React.FC<{
   const history = useHistory();
   const [gMap, setGMap] = useState<google.maps.Map>();
   const [centerMarker, setCenterMarker] = useState<google.maps.Marker>();
+  const watchPosRef = useRef<google.maps.Marker>();
   const [busStopMarkers, setBusStopMarkers] = useState<google.maps.Marker[]>(
     [],
   );
@@ -144,16 +145,6 @@ const GoogleMap: React.FC<{
       setBusStop,
       history,
     );
-
-    new google.maps.Marker({
-      position: watchCoord.center,
-      map,
-      animation: 1,
-      icon: {
-        url: "assets/img/circle.png",
-        scaledSize: new google.maps.Size(24, 24),
-      },
-    });
   };
 
   const onDragEndHandler = (ev: google.maps.Map) => {
@@ -192,6 +183,24 @@ const GoogleMap: React.FC<{
       centerMarker.setPosition(newCenter);
     }
   };
+
+  useEffect(() => {
+    if (gMap && !watchPosRef.current && watchCoord) {
+      watchPosRef.current = new google.maps.Marker({
+        position: watchCoord.center,
+        map: gMap,
+        animation: 1,
+        icon: {
+          url: "assets/img/circle.png",
+          scaledSize: new google.maps.Size(24, 24),
+        },
+      });
+    }
+
+    if (gMap && watchPosRef.current) {
+      watchPosRef.current.setPosition(watchCoord.center);
+    }
+  }, [watchCoord, gMap]);
 
   return (
     <GoogleMapReact
