@@ -173,7 +173,7 @@ const BusArrival: React.FC<{ setBusStop(busStop: BusStopModel): void }> = ({
             <IonMenuButton />
           </IonButtons>
           <IonTitle>Bus Arrival</IonTitle>
-          <IonButtons slot="secondary">
+          <IonButtons slot="primary">
             <IonButton onClick={() => fetchLocation()}>
               <IonIcon slot="icon-only" icon={locateSharp} />
             </IonButton>

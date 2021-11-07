@@ -127,7 +127,7 @@ const BusServices: React.FC<{ setBus(bus: BusServiceModel): void }> = ({
               <IonMenuButton />
             </IonButtons>
             <IonTitle>Bus Services</IonTitle>
-            <IonButtons slot="secondary">
+            <IonButtons slot="primary">
               <IonButton onClick={() => showSearchAndFocus()}>
                 <IonIcon slot="icon-only" icon={search} />
               </IonButton>
