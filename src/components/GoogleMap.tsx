@@ -45,7 +45,7 @@ const setOriginMarker = (
 const infoWindow = (bs: BusStopModel) => {
   return `
       <a
-        style="font-size: 16px; font-weight: 800; color: grey"
+        style="font-size: 16px; font-weight: 900; color: grey;"
         id="goTo">
         ${bs.Description}
       </a>
@@ -96,6 +96,7 @@ const filterBusListAndUpdateBusMarkers = (
           document.getElementById("goTo")?.addEventListener("click", () => {
             setBusStop(filteredBusStops[index]);
             history.push("/busarrival/" + filteredBusStops[index].BusStopCode);
+            tempInfoWindows.forEach((iw) => iw.close());
           });
         });
         currentlyOpenInfoWindow = index;
