@@ -84,7 +84,7 @@ const BusServiceDetail: React.FC<{
           </IonButtons>
           <IonTitle>Bus No: {busno}</IonTitle>
           {showDirChange && (
-            <IonButtons slot="secondary">
+            <IonButtons slot="primary">
               <IonButton
                 onClick={() => setDirection((prev) => (prev === 1 ? 2 : 1))}
               >
