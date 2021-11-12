@@ -1,6 +1,6 @@
 {
   "appId": "io.devjo.transport",
-  "appName": "transport-guardian",
+  "appName": "TransportGuard",
   "webDir": "build",
   "bundledWebRuntime": false,
   "plugins": {
@@ -13,5 +13,8 @@
       "spinnerColor": "#999999",
       "layoutName": "launch_screen"
     }
+  },
+  "ios": {
+    "scheme": "TransportGuard"
   }
 }
