@@ -14,7 +14,7 @@ import {
   IonSearchbar,
 } from "@ionic/react";
 import { search } from "ionicons/icons";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import {
   BUS_SERVICE_API,
   LTA_ACCESSS_KEY,
@@ -25,6 +25,7 @@ import "./BusService.scss";
 import { Virtuoso } from "react-virtuoso";
 import { Http } from "@capacitor-community/http";
 import { isPlatform } from "@ionic/react";
+import BusContext from "../store/BusContext";
 
 const compare = (a: BusServiceModel, b: BusServiceModel) => {
   // const reA = /[^a-zA-Z]/g;
@@ -42,9 +43,8 @@ const compare = (a: BusServiceModel, b: BusServiceModel) => {
   return a.ServiceNo.localeCompare(b.ServiceNo);
 };
 
-const BusServices: React.FC<{ setBus(bus: BusServiceModel): void }> = ({
-  setBus,
-}) => {
+const BusServices: React.FC = () => {
+  const busCtx = useContext(BusContext);
   const searchRef = useRef<any>();
   const [busServices, setBusServices] = useState<BusServiceModel[]>([]);
   const [unFilteredBusServices, setUnFilteredBusServices] = useState<
@@ -172,7 +172,7 @@ const BusServices: React.FC<{ setBus(bus: BusServiceModel): void }> = ({
                   detail
                   routerLink={routeLink}
                   routerDirection="forward"
-                  onClick={() => setBus(bus)}
+                  onClick={() => busCtx.setBusService(bus)}
                 >
                   <div className="item">
                     <div className="service">{bus.ServiceNo}</div>

@@ -26,7 +26,6 @@ import Favourite from "./pages/Favourite";
 import AboutUs from "./pages/AboutUs";
 import BusServiceDetail from "./pages/BusServiceDetail";
 import { useEffect, useState } from "react";
-import { BusServiceModel, BusStopModel } from "./models/bus.model";
 import BusServices from "./pages/BusService";
 import BusArrivalDetail from "./pages/BusArrivalDetail";
 import {
@@ -35,6 +34,7 @@ import {
   BannerAdSize,
   BannerAdPosition,
 } from "@capacitor-community/admob";
+import BusContextProvider from "./store/BusProvider";
 
 const bannerOptions: BannerAdOptions = {
   adId: "ca-app-pub-6451703586668878/7345039996",
@@ -45,17 +45,7 @@ const bannerOptions: BannerAdOptions = {
 };
 
 const App: React.FC = () => {
-  const [selectedBus, setSelectedBus] = useState({} as BusServiceModel);
-  const [selectedBusStop, setSelectedBusStop] = useState({} as BusStopModel);
-  const [showAds, setShowAds] = useState(true);
-
-  const setBusHandler = (bus: BusServiceModel) => {
-    setSelectedBus(bus);
-  };
-
-  const setBusStopHandler = (busStop: BusStopModel) => {
-    setSelectedBusStop(busStop);
-  };
+  const [showAds, setShowAds] = useState(false);
 
   const toggleAds = (adsBool: boolean) => {
     setShowAds(adsBool);
@@ -69,50 +59,53 @@ const App: React.FC = () => {
   useEffect(() => {
     AdMob.initialize({
       requestTrackingAuthorization: true,
-      // testingDevices: [""],
+      // testingDevices: ["3FDE6E5ED9F17CB30BB8F0D8B5B2CFDF"],
       // initializeForTesting: true,
     }).then(() => {
-      AdMob.showBanner(bannerOptions);
+      // AdMob.showBanner(bannerOptions);
+      // AdMob.addListener(BannerAdPluginEvents.FailedToLoad, (info) => {
+      //   alert(JSON.stringify(info));
+      // });
     });
   }, []);
 
   return (
-    <IonApp style={{ height: showAds ? "calc(100% - 60px)" : "100%" }}>
-      <IonReactRouter>
-        <IonSplitPane contentId="main">
-          <Menu showAds={showAds} setAds={toggleAds} />
-          <IonRouterOutlet id="main">
-            <Route path="/" exact={true}>
-              <Redirect to="/busarrival" />
-            </Route>
-            <Route path="/busservices" exact={true}>
-              <BusServices setBus={setBusHandler} />
-            </Route>
-            <Route path="/busservices/:busno" exact={true}>
-              <BusServiceDetail
-                bus={selectedBus}
-                setBusStop={setBusStopHandler}
-              />
-            </Route>
-            <Route path="/busarrival" exact={true}>
-              <BusArrival setBusStop={setBusStopHandler} />
-            </Route>
-            <Route path="/busarrival/:busarrivalno" exact={true}>
-              <BusArrivalDetail
-                busStop={selectedBusStop}
-                setBusStop={setBusStopHandler}
-              />
-            </Route>
-            <Route path="/fav" exact={true}>
-              <Favourite />
-            </Route>
-            <Route path="/aboutus" exact={true}>
-              <AboutUs />
-            </Route>
-          </IonRouterOutlet>
-        </IonSplitPane>
-      </IonReactRouter>
-    </IonApp>
+    <BusContextProvider>
+      <IonApp
+        style={{
+          height: showAds ? `90%` : "100%",
+        }}
+      >
+        <IonReactRouter>
+          <IonSplitPane contentId="main">
+            <Menu showAds={showAds} setAds={toggleAds} />
+            <IonRouterOutlet id="main">
+              <Route path="/" exact={true}>
+                <Redirect to="/busarrival" />
+              </Route>
+              <Route path="/busservices" exact={true}>
+                <BusServices />
+              </Route>
+              <Route path="/busservices/:busServiceNo" exact={true}>
+                <BusServiceDetail />
+              </Route>
+              <Route path="/busarrival" exact={true}>
+                <BusArrival />
+              </Route>
+              <Route path="/busarrival/:busStopCode/:busStopName" exact={true}>
+                <BusArrivalDetail />
+              </Route>
+              <Route path="/fav" exact={true}>
+                <Favourite />
+              </Route>
+              <Route path="/aboutus" exact={true}>
+                <AboutUs />
+              </Route>
+            </IonRouterOutlet>
+          </IonSplitPane>
+        </IonReactRouter>
+      </IonApp>
+    </BusContextProvider>
   );
 };
 

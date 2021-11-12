@@ -11,6 +11,7 @@ import {
   IonIcon,
   useIonRouter,
   IonToast,
+  IonAlert,
 } from "@ionic/react";
 import {
   Geolocation,
@@ -27,10 +28,9 @@ import { App } from "@capacitor/app";
 import { SplashScreen } from "@capacitor/splash-screen";
 import { isPlatform } from "@ionic/react";
 
-const BusArrival: React.FC<{ setBusStop(busStop: BusStopModel): void }> = ({
-  setBusStop,
-}) => {
+const BusArrival: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
   const [coord, setCoord] = useState<GoogleMapStartingPoint>(
     {} as GoogleMapStartingPoint,
   );
@@ -47,7 +47,7 @@ const BusArrival: React.FC<{ setBusStop(busStop: BusStopModel): void }> = ({
     try {
       await getCurrentLocation();
     } catch (err) {
-      console.log(err);
+      setError("Failed to fetch location");
     }
     setIsLoading(false);
   }, []);
@@ -182,6 +182,14 @@ const BusArrival: React.FC<{ setBusStop(busStop: BusStopModel): void }> = ({
       </IonHeader>
 
       <IonContent>
+        <IonAlert
+          isOpen={!!error}
+          onDidDismiss={() => setError("")}
+          header={"Error"}
+          message={error}
+          buttons={["OK"]}
+        />
+
         {isLoading && <IonLoading isOpen={isLoading} message={"Loading..."} />}
 
         <div className="map-container">
@@ -190,15 +198,12 @@ const BusArrival: React.FC<{ setBusStop(busStop: BusStopModel): void }> = ({
               coord={coord}
               setBusStopList={setFilteredBustops}
               setCoord={setCoord}
-              setBusStop={setBusStop}
               watchCoord={watchCoord}
             />
           )}
         </div>
         <div className="map-container">
-          {!isLoading && (
-            <BusStopList busStops={filteredBustops} setBusStop={setBusStop} />
-          )}
+          {!isLoading && <BusStopList busStops={filteredBustops} />}
         </div>
 
         <IonToast

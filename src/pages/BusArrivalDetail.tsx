@@ -20,11 +20,7 @@ import {
   LTA_ACCESSS_KEY,
   THINGS_PROXY,
 } from "../configs/bus.config";
-import {
-  BusArrivalModel,
-  BusArrivalResponseModel,
-  BusStopModel,
-} from "../models/bus.model";
+import { BusArrivalModel, BusArrivalResponseModel } from "../models/bus.model";
 import "./BusArrivalDetail.scss";
 import {
   arrowDownCircleOutline,
@@ -36,15 +32,13 @@ import { isPlatform } from "@ionic/react";
 import { useParams } from "react-router";
 import TimeArrival from "../components/TimeArrival";
 
-const BusArrivalDetail: React.FC<{
-  busStop: BusStopModel;
-  setBusStop(bus: any): void;
-}> = ({ busStop, setBusStop }) => {
-  const { busarrivalno } = useParams<{ busarrivalno: string }>();
+const BusArrivalDetail: React.FC = () => {
+  const { busStopCode, busStopName } =
+    useParams<{ busStopCode: string; busStopName: string }>();
+
   const [busArrival, setBusArrival] = useState<BusArrivalModel[]>(
     [] as BusArrivalModel[],
   );
-  const [localBusStopInfo, setlocalBusStopInfo] = useState<BusStopModel>();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -67,10 +61,6 @@ const BusArrivalDetail: React.FC<{
       const data = res1.data as BusArrivalResponseModel;
 
       setBusArrival(data.Services);
-
-      if (busStop) {
-        setlocalBusStopInfo(busStop);
-      }
     } catch (error: any) {
       setError("Failed to fetch information");
     }
@@ -78,14 +68,14 @@ const BusArrivalDetail: React.FC<{
 
   useEffect(() => {
     setIsLoading(true);
-    fetchBusArrival(busarrivalno).then(() => {
+    fetchBusArrival(busStopCode).then(() => {
       setIsLoading(false);
     });
-  }, [fetchBusArrival, busarrivalno]);
+  }, [fetchBusArrival, busStopCode]);
 
   const refreshHandler = (event: CustomEvent<RefresherEventDetail>) => {
     setIsRefreshing(true);
-    fetchBusArrival(busarrivalno).then(() => {
+    fetchBusArrival(busStopCode).then(() => {
       setTimeout(() => {
         event.detail.complete();
         setIsRefreshing(false);
@@ -101,7 +91,7 @@ const BusArrivalDetail: React.FC<{
             <IonBackButton defaultHref="/busarrival" />
           </IonButtons>
           <IonTitle>
-            {localBusStopInfo?.Description} - {localBusStopInfo?.BusStopCode}
+            {busStopName} - {busStopCode}
           </IonTitle>
         </IonToolbar>
       </IonHeader>
@@ -179,7 +169,6 @@ const BusArrivalDetail: React.FC<{
                     key={index}
                     routerLink={routeLink}
                     routerDirection="forward"
-                    onClick={() => setBusStop(busArrival)}
                   >
                     <div className="arrival-item">
                       <div className="desc">{busArrival.ServiceNo}</div>

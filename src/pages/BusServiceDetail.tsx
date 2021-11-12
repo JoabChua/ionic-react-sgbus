@@ -13,20 +13,13 @@ import {
   IonIcon,
 } from "@ionic/react";
 import { useCallback, useEffect, useState } from "react";
-import {
-  BusServiceModel,
-  BusRouteModel,
-  BusStopModel,
-} from "../models/bus.model";
+import { BusRouteModel, BusStopModel } from "../models/bus.model";
 import "./BusServiceDetail.scss";
 import { arrowForward, swapVerticalOutline } from "ionicons/icons";
 import { useParams } from "react-router";
 
-const BusServiceDetail: React.FC<{
-  bus: BusServiceModel;
-  setBusStop(bus: any): void;
-}> = ({ bus, setBusStop }) => {
-  const { busno } = useParams<{ busno: string }>();
+const BusServiceDetail: React.FC = () => {
+  const { busServiceNo } = useParams<{ busServiceNo: string }>();
   const [busRoute, setBusRoute] = useState<BusRouteModel[]>(
     [] as BusRouteModel[],
   );
@@ -72,8 +65,8 @@ const BusServiceDetail: React.FC<{
   }, []);
 
   useEffect(() => {
-    fetchBusRoute(busno);
-  }, [fetchBusRoute, busno]);
+    fetchBusRoute(busServiceNo);
+  }, [fetchBusRoute, busServiceNo]);
 
   return (
     <IonPage>
@@ -82,7 +75,7 @@ const BusServiceDetail: React.FC<{
           <IonButtons slot="start">
             <IonBackButton defaultHref="/busservices" />
           </IonButtons>
-          <IonTitle>Bus No: {busno}</IonTitle>
+          <IonTitle>Bus No: {busServiceNo}</IonTitle>
           {showDirChange && (
             <IonButtons slot="primary">
               <IonButton
@@ -124,14 +117,13 @@ const BusServiceDetail: React.FC<{
             }
             <IonList lines={"full"}>
               {(direction === 1 ? busRoute : busRoute2).map((bus, index) => {
-                const routeLink = `/busarrival/${bus.BusStopCode}`;
+                const routeLink = `/busarrival/${bus.BusStopCode}/${bus.Description}`;
                 return (
                   direction === bus.Direction && (
                     <IonItem
                       key={index}
                       routerLink={routeLink}
                       routerDirection="forward"
-                      onClick={() => setBusStop(bus)}
                     >
                       <div className="item">
                         <div className="bus-hour">

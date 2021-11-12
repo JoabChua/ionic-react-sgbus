@@ -1,10 +1,12 @@
 import { BusStopModel } from "../models/bus.model";
 import { IonItem, IonList } from "@ionic/react";
+import { useContext } from "react";
+import BusContext from "../store/BusContext";
 
 const BusStopList: React.FC<{
   busStops: BusStopModel[];
-  setBusStop(busStop: BusStopModel): void;
-}> = ({ busStops, setBusStop }) => {
+}> = ({ busStops }) => {
+  const busCtx = useContext(BusContext);
   const newList = [...busStops].sort(
     ({ distance: a }, { distance: b }) => a! - b!,
   );
@@ -14,13 +16,13 @@ const BusStopList: React.FC<{
       {newList.length > 0 && (
         <IonList>
           {newList.map((busStop) => {
-            const routeLink = `/busarrival/${busStop.BusStopCode}`;
+            const routeLink = `/busarrival/${busStop.BusStopCode}/${busStop.Description}`;
             return (
               <IonItem
                 key={busStop.BusStopCode + busStop.Description}
                 routerLink={routeLink}
                 routerDirection="forward"
-                onClick={() => setBusStop(busStop)}
+                onClick={() => busCtx.setBusStop(busStop)}
               >
                 <div className="stop">
                   <div className="left">

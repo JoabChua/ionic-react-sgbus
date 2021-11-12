@@ -1,9 +1,10 @@
 import GoogleMapReact from "google-map-react";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router";
 import { BKUP_MAP_KEY } from "../configs/bus.config";
 import { BusStopModel } from "../models/bus.model";
 import { GoogleMapStartingPoint } from "../pages/BusArrival";
+import BusContext, { BusContextModel } from "../store/BusContext";
 import "./GoogleMap.scss";
 
 const filterBusStops = (
@@ -58,7 +59,7 @@ const filterBusListAndUpdateBusMarkers = (
   setBusStopList: any,
   map: google.maps.Map,
   setBusStopMarkers: any,
-  setBusStop: any,
+  busCtx: BusContextModel,
   history: any,
 ) => {
   const tempBusStopMarkers: google.maps.Marker[] = [];
@@ -94,8 +95,13 @@ const filterBusListAndUpdateBusMarkers = (
         tempInfoWindows[index].open(map, marker);
         tempInfoWindows[index].addListener("domready", () => {
           document.getElementById("goTo")?.addEventListener("click", () => {
-            setBusStop(filteredBusStops[index]);
-            history.push("/busarrival/" + filteredBusStops[index].BusStopCode);
+            busCtx.setBusStop(filteredBusStops[index]);
+            history.push(
+              "/busarrival/" +
+                filteredBusStops[index].BusStopCode +
+                "/" +
+                filteredBusStops[index].Description,
+            );
             tempInfoWindows.forEach((iw) => iw.close());
           });
         });
@@ -113,9 +119,9 @@ const GoogleMap: React.FC<{
   coord: GoogleMapStartingPoint;
   setBusStopList(filterbs: BusStopModel[]): void;
   setCoord(coord: GoogleMapStartingPoint): void;
-  setBusStop(busStop: BusStopModel): void;
   watchCoord: GoogleMapStartingPoint;
-}> = ({ coord, setBusStopList, setCoord, setBusStop, watchCoord }) => {
+}> = ({ coord, setBusStopList, setCoord, watchCoord }) => {
+  const busCtx = useContext(BusContext);
   const history = useHistory();
   const [gMap, setGMap] = useState<google.maps.Map>();
   const [centerMarker, setCenterMarker] = useState<google.maps.Marker>();
@@ -143,7 +149,7 @@ const GoogleMap: React.FC<{
       setBusStopList,
       map,
       setBusStopMarkers,
-      setBusStop,
+      busCtx,
       history,
     );
   };
@@ -170,7 +176,7 @@ const GoogleMap: React.FC<{
       setBusStopList,
       gMap!,
       setBusStopMarkers,
-      setBusStop,
+      busCtx,
       history,
     );
   };
