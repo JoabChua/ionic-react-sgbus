@@ -13,26 +13,35 @@ import {
   IonList,
   IonAlert,
   IonIcon,
+  IonButton,
 } from "@ionic/react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import {
   BUS_ARRIVAL_API,
   LTA_ACCESSS_KEY,
   THINGS_PROXY,
 } from "../configs/bus.config";
-import { BusArrivalModel, BusArrivalResponseModel } from "../models/bus.model";
+import {
+  BusArrivalModel,
+  BusArrivalResponseModel,
+  FavBusItem,
+} from "../models/bus.model";
 import "./BusArrivalDetail.scss";
 import {
   arrowDownCircleOutline,
   chevronDownCircleOutline,
+  star,
+  starOutline,
 } from "ionicons/icons";
 import { RefresherEventDetail } from "@ionic/core";
 import { Http } from "@capacitor-community/http";
 import { isPlatform } from "@ionic/react";
 import { useParams } from "react-router";
 import TimeArrival from "../components/TimeArrival";
+import BusContext from "../store/BusContext";
 
 const BusArrivalDetail: React.FC = () => {
+  const { favStore, setFavStore } = useContext(BusContext);
   const { busStopCode, busStopName, roadName } =
     useParams<{ busStopCode: string; busStopName: string; roadName: string }>();
 
@@ -42,6 +51,8 @@ const BusArrivalDetail: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isFav, setIsFav] = useState(false);
+  const [favIndex, setFavIndex] = useState(-1);
 
   const fetchBusArrival = useCallback(async (busService: string) => {
     try {
@@ -73,6 +84,18 @@ const BusArrivalDetail: React.FC = () => {
     });
   }, [fetchBusArrival, busStopCode]);
 
+  useEffect(() => {
+    if (favStore) {
+      const idx = favStore.busStop.findIndex(
+        (favBusItem) => favBusItem.busStopCode === busStopCode,
+      );
+      if (idx > -1) {
+        setFavIndex(idx);
+        setIsFav(true);
+      }
+    }
+  }, []);
+
   const refreshHandler = (event: CustomEvent<RefresherEventDetail>) => {
     setIsRefreshing(true);
     fetchBusArrival(busStopCode).then(() => {
@@ -81,6 +104,25 @@ const BusArrivalDetail: React.FC = () => {
         setIsRefreshing(false);
       }, 500);
     });
+  };
+
+  const setFavBusStopHandler = (checked: boolean) => {
+    if (checked) {
+      const favObj: FavBusItem = {
+        busStopCode,
+        roadName,
+        busStopName,
+        favBusStop: true,
+      };
+      favStore.busStop.push(favObj);
+      setFavIndex(favStore.busStop.length - 1);
+      setIsFav(true);
+    } else {
+      favStore.busStop.splice(favIndex, 1);
+      setFavIndex(-1);
+      setIsFav(false);
+    }
+    setFavStore(favStore);
   };
 
   return (
@@ -96,6 +138,14 @@ const BusArrivalDetail: React.FC = () => {
               {roadName} | {busStopCode}
             </div>
           </IonTitle>
+          <IonButtons slot="primary">
+            <IonButton
+              onClick={() => setFavBusStopHandler(!isFav)}
+              style={{ color: "gold" }}
+            >
+              <IonIcon slot="icon-only" icon={isFav ? star : starOutline} />
+            </IonButton>
+          </IonButtons>
         </IonToolbar>
       </IonHeader>
 

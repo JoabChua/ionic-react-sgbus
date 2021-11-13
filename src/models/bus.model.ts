@@ -80,3 +80,15 @@ export interface NextBus {
   Feature: string;
   Type: string;
 }
+
+export interface FavStore {
+  busStop: FavBusItem[];
+}
+
+export interface FavBusItem {
+  busStopCode: string;
+  busStopName: string;
+  roadName: string;
+  favBusStop: boolean;
+  buses?: string[];
+}
