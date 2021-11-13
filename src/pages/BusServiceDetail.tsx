@@ -117,7 +117,7 @@ const BusServiceDetail: React.FC = () => {
             }
             <IonList lines={"full"}>
               {(direction === 1 ? busRoute : busRoute2).map((bus, index) => {
-                const routeLink = `/busarrival/${bus.BusStopCode}/${bus.Description}`;
+                const routeLink = `/busarrival/${bus.BusStopCode}/${bus.Description}/${bus.RoadName}`;
                 return (
                   direction === bus.Direction && (
                     <IonItem

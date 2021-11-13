@@ -33,8 +33,8 @@ import { useParams } from "react-router";
 import TimeArrival from "../components/TimeArrival";
 
 const BusArrivalDetail: React.FC = () => {
-  const { busStopCode, busStopName } =
-    useParams<{ busStopCode: string; busStopName: string }>();
+  const { busStopCode, busStopName, roadName } =
+    useParams<{ busStopCode: string; busStopName: string; roadName: string }>();
 
   const [busArrival, setBusArrival] = useState<BusArrivalModel[]>(
     [] as BusArrivalModel[],
@@ -91,7 +91,10 @@ const BusArrivalDetail: React.FC = () => {
             <IonBackButton defaultHref="/busarrival" />
           </IonButtons>
           <IonTitle>
-            {busStopName} - {busStopCode}
+            <div className="title">{busStopName}</div>
+            <div className="subtitle">
+              {roadName} | {busStopCode}
+            </div>
           </IonTitle>
         </IonToolbar>
       </IonHeader>

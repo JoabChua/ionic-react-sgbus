@@ -92,7 +92,10 @@ const App: React.FC = () => {
               <Route path="/busarrival" exact={true}>
                 <BusArrival />
               </Route>
-              <Route path="/busarrival/:busStopCode/:busStopName" exact={true}>
+              <Route
+                path="/busarrival/:busStopCode/:busStopName/:roadName"
+                exact={true}
+              >
                 <BusArrivalDetail />
               </Route>
               <Route path="/fav" exact={true}>

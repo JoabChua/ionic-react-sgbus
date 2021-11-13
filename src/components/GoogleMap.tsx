@@ -100,7 +100,9 @@ const filterBusListAndUpdateBusMarkers = (
               "/busarrival/" +
                 filteredBusStops[index].BusStopCode +
                 "/" +
-                filteredBusStops[index].Description,
+                filteredBusStops[index].Description +
+                "/" +
+                filteredBusStops[index].RoadName,
             );
             tempInfoWindows.forEach((iw) => iw.close());
           });

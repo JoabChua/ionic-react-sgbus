@@ -16,7 +16,7 @@ const BusStopList: React.FC<{
       {newList.length > 0 && (
         <IonList>
           {newList.map((busStop) => {
-            const routeLink = `/busarrival/${busStop.BusStopCode}/${busStop.Description}`;
+            const routeLink = `/busarrival/${busStop.BusStopCode}/${busStop.Description}/${busStop.RoadName}`;
             return (
               <IonItem
                 key={busStop.BusStopCode + busStop.Description}
