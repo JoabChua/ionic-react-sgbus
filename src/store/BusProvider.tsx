@@ -27,7 +27,6 @@ const BusContextProvider: React.FC = (props) => {
     if (!!fav) {
       setFavStore(fav);
     }
-    console.log(fav);
   }, []);
 
   const contextValue: BusContextModel = {

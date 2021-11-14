@@ -114,7 +114,7 @@ const BusArrivalDetail: React.FC = () => {
         busStopName,
         favBusStop: true,
       };
-      favStore.busStop.push(favObj);
+      favStore.busStop.unshift(favObj);
       setFavIndex(favStore.busStop.length - 1);
       setIsFav(true);
     } else {

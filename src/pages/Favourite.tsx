@@ -13,21 +13,24 @@ import {
   IonItemOptions,
   IonItemSliding,
   IonAlert,
+  useIonViewDidEnter,
 } from "@ionic/react";
 import { trash } from "ionicons/icons";
-import { useContext, useRef, useState } from "react";
+import { useContext, useReducer, useRef, useState } from "react";
 import { FavBusItem } from "../models/bus.model";
 import BusContext from "../store/BusContext";
 
 const Favourite: React.FC = () => {
   const { favStore, setFavStore } = useContext(BusContext);
-  const slidingRef = useRef<HTMLIonItemSlidingElement>(null);
+  const slidingRef = useRef<HTMLIonListElement>(null);
   const [showAlert, setShowAlert] = useState(false);
   const [removeBusStop, setRemoveBusStop] = useState<FavBusItem>();
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const promptAlert = (busStop: FavBusItem) => {
-    console.log(slidingRef.current);
-    slidingRef.current?.closeOpened();
+    console.log(slidingRef.current?.firstChild);
+    const slider = slidingRef.current?.firstChild as HTMLIonItemSlidingElement;
+    slider.closeOpened();
     setShowAlert(true);
     setRemoveBusStop(busStop);
   };
@@ -41,6 +44,10 @@ const Favourite: React.FC = () => {
       setFavStore(favStore);
     }
   };
+
+  useIonViewDidEnter(() => {
+    forceUpdate();
+  });
 
   return (
     <IonPage>
@@ -74,14 +81,11 @@ const Favourite: React.FC = () => {
 
       <IonContent>
         {favStore.busStop.length > 0 && (
-          <IonList>
+          <IonList ref={slidingRef}>
             {favStore.busStop.map((busStop) => {
               const routeLink = `/busarrival/${busStop.busStopCode}/${busStop.busStopName}/${busStop.roadName}`;
               return (
-                <IonItemSliding
-                  key={busStop.busStopCode + busStop.busStopName}
-                  ref={slidingRef}
-                >
+                <IonItemSliding key={busStop.busStopCode + busStop.busStopName}>
                   <IonItem routerLink={routeLink} routerDirection="forward">
                     <div className="stop">
                       <div className="left">
