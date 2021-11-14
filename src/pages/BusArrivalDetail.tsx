@@ -133,7 +133,7 @@ const BusArrivalDetail: React.FC = () => {
             <IonBackButton defaultHref="/busarrival" />
           </IonButtons>
           <IonTitle>
-            <div className="title">{busStopName}</div>
+            <div className="title">{busStopName.replace("_", "/")}</div>
             <div className="subtitle">
               {roadName} | {busStopCode}
             </div>
