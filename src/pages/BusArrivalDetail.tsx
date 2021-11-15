@@ -14,6 +14,7 @@ import {
   IonAlert,
   IonIcon,
   IonButton,
+  useIonToast,
 } from "@ionic/react";
 import { useCallback, useContext, useEffect, useState } from "react";
 import {
@@ -53,6 +54,7 @@ const BusArrivalDetail: React.FC = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isFav, setIsFav] = useState(false);
   const [favIndex, setFavIndex] = useState(-1);
+  const [present, dismiss] = useIonToast();
 
   const fetchBusArrival = useCallback(async (busService: string) => {
     try {
@@ -92,9 +94,12 @@ const BusArrivalDetail: React.FC = () => {
       if (idx > -1) {
         setFavIndex(idx);
         setIsFav(true);
+      } else {
+        setFavIndex(-1);
+        setIsFav(false);
       }
     }
-  }, []);
+  }, [busStopCode, favStore]);
 
   const refreshHandler = (event: CustomEvent<RefresherEventDetail>) => {
     setIsRefreshing(true);
@@ -107,22 +112,35 @@ const BusArrivalDetail: React.FC = () => {
   };
 
   const setFavBusStopHandler = (checked: boolean) => {
-    if (checked) {
-      const favObj: FavBusItem = {
-        busStopCode,
-        roadName,
-        busStopName,
-        favBusStop: true,
-      };
-      favStore.busStop.unshift(favObj);
-      setFavIndex(favStore.busStop.length - 1);
-      setIsFav(true);
-    } else {
-      favStore.busStop.splice(favIndex, 1);
-      setFavIndex(-1);
-      setIsFav(false);
-    }
-    setFavStore(favStore);
+    dismiss();
+    setTimeout(() => {
+      if (checked) {
+        const favObj: FavBusItem = {
+          busStopCode,
+          roadName,
+          busStopName,
+          favBusStop: true,
+        };
+        const newArr = [favObj, ...favStore.busStop];
+        setFavIndex(0);
+        setIsFav(true);
+        setFavStore({
+          ...favStore,
+          busStop: newArr,
+        });
+        present("Bus Stop added to Favourite.", 2000);
+      } else {
+        const newArr = [...favStore.busStop];
+        newArr.splice(favIndex, 1);
+        setFavStore({
+          ...favStore,
+          busStop: newArr,
+        });
+        setFavIndex(-1);
+        setIsFav(false);
+        present("Bus Stop removed from Favourite.", 2000);
+      }
+    }, 400);
   };
 
   return (
@@ -139,11 +157,12 @@ const BusArrivalDetail: React.FC = () => {
             </div>
           </IonTitle>
           <IonButtons slot="primary">
-            <IonButton
-              onClick={() => setFavBusStopHandler(!isFav)}
-              style={{ color: "gold" }}
-            >
-              <IonIcon slot="icon-only" icon={isFav ? star : starOutline} />
+            <IonButton onClick={() => setFavBusStopHandler(!isFav)}>
+              <IonIcon
+                style={{ color: "gold" }}
+                slot="icon-only"
+                icon={isFav ? star : starOutline}
+              />
             </IonButton>
           </IonButtons>
         </IonToolbar>

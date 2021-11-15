@@ -14,6 +14,7 @@ import {
   IonItemSliding,
   IonAlert,
   useIonViewDidEnter,
+  useIonToast,
 } from "@ionic/react";
 import { trash } from "ionicons/icons";
 import { useContext, useReducer, useRef, useState } from "react";
@@ -26,9 +27,9 @@ const Favourite: React.FC = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [removeBusStop, setRemoveBusStop] = useState<FavBusItem>();
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [present, dismiss] = useIonToast();
 
   const promptAlert = (busStop: FavBusItem) => {
-    console.log(slidingRef.current?.firstChild);
     const slider = slidingRef.current?.firstChild as HTMLIonItemSlidingElement;
     slider.closeOpened();
     setShowAlert(true);
@@ -36,12 +37,14 @@ const Favourite: React.FC = () => {
   };
 
   const removeFavHandler = () => {
+    dismiss();
     const idx = favStore.busStop.findIndex(
       (favBus) => favBus.busStopCode === removeBusStop?.busStopCode,
     );
     if (idx > -1) {
       favStore.busStop.splice(idx, 1);
       setFavStore(favStore);
+      present("Bus Stop removed from Favourite.", 2000);
     }
   };
 
