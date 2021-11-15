@@ -28,9 +28,9 @@ ionic serve
 
 5. Please ensure that you provide your own google API key and LTA data mall API key for the app to load properly.
 
-![Landing Page](https://github.com/JoabChua/ionic-react-sgbus/blob/master/images/s1.png)
+![Landing Page](images/s1.png)
 
-![Arrival Time Page](https://github.com/JoabChua/ionic-react-sgbus/blob/master/images/s2.png)
+![Arrival Time Page](images/s2.png)
 
 ## Development In Progress
 
