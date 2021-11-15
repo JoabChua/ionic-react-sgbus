@@ -36,13 +36,14 @@ import {
 } from "@capacitor-community/admob";
 import BusContextProvider from "./store/BusProvider";
 import { isPlatform } from "@ionic/react";
+import {
+  ADS_TESTING_DEVICES,
+  ANDROID_ADS_ID,
+  IOS_ADS_ID,
+} from "./configs/bus.config";
 
 const bannerOptions: BannerAdOptions = {
-  adId: `${
-    isPlatform("android")
-      ? "ca-app-pub-6451703586668878/6992081542"
-      : "ca-app-pub-6451703586668878/2263349109"
-  }`,
+  adId: `${isPlatform("android") ? ANDROID_ADS_ID.banner : IOS_ADS_ID.banner}`,
   adSize: BannerAdSize.ADAPTIVE_BANNER,
   position: BannerAdPosition.BOTTOM_CENTER,
   margin: 0,
@@ -64,12 +65,7 @@ const App: React.FC = () => {
   useEffect(() => {
     AdMob.initialize({
       requestTrackingAuthorization: true,
-      testingDevices: [
-        "3FDE6E5ED9F17CB30BB8F0D8B5B2CFDF",
-        "84F6767A-8FE5-4743-9357-BBA3B252EAC9",
-        "de441949487c4cd620c2e516f9d415defada873b",
-        "DA0E2101929E866A",
-      ],
+      testingDevices: ADS_TESTING_DEVICES,
       // initializeForTesting: true,
     }).then(() => {
       // AdMob.showBanner(bannerOptions);
