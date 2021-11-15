@@ -4,6 +4,14 @@
 
 This application is developed to provide real time bus arrival timings.
 
+<br />
+
+## Dev Framework / Library
+
+This application is developed using Ionic and React. To learn more about the framework and library, [click here](https://ionicframework.com/) to explore more about Ionic and [click here](https://reactjs.org/) to learn more about React.
+
+<br />
+
 #### To run and test this application on local machine
 
 1. git clone from this repo.
@@ -28,15 +36,16 @@ ionic serve
 
 5. Please ensure that you provide your own google API key and LTA data mall API key for the app to load properly.
 
-![Landing Page](images/s1.png)
-
-![Arrival Time Page](images/s2.png)
+<img src="images/s1.png" alt="Landing Page" width="200" style="margin: 50px"/>
+<img src="images/s2.png" alt="Arrival Time Page" width="200" style="margin: 50px"/>
 
 ## Development In Progress
 
 1. This project is currently in progress, more features are coming up.
 2. Favourite Bus Stop, Bus Service, Bus at specifc Bus Stop.
 3. More colorful themes are coming.
+
+<br />
 
 ## Copyright
 
