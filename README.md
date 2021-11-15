@@ -36,8 +36,8 @@ ionic serve
 
 5. Please ensure that you provide your own google API key and LTA data mall API key for the app to load properly.
 
-<img src="images/s1.png" alt="Landing Page" width="200" style="margin: 50px"/>
-<img src="images/s2.png" alt="Arrival Time Page" width="200" style="margin: 50px"/>
+<img src="images/s1.png" alt="Landing Page" width="200"/>
+<img src="images/s2.png" alt="Arrival Time Page" width="200" />
 
 ## Development In Progress
 
