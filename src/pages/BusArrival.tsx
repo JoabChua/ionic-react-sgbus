@@ -37,7 +37,9 @@ const BusArrival: React.FC = () => {
   const [watchCoord, setWatchCoord] = useState<GoogleMapStartingPoint>(
     {} as GoogleMapStartingPoint,
   );
-  const [filteredBustops, setFilteredBustops] = useState<BusStopModel[]>([]);
+  const [filteredBustops, setFilteredBustops] = useState<BusStopModel[] | null>(
+    null,
+  );
   const [showToast, setShowToast] = useState(false);
   const lastTimePressBack = useRef(0);
   const watchIds = useRef<string[]>([]);

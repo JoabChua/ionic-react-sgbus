@@ -4,16 +4,18 @@ import { useContext } from "react";
 import BusContext from "../store/BusContext";
 
 const BusStopList: React.FC<{
-  busStops: BusStopModel[];
+  busStops: BusStopModel[] | null;
 }> = ({ busStops }) => {
   const busCtx = useContext(BusContext);
-  const newList = [...busStops].sort(
-    ({ distance: a }, { distance: b }) => a! - b!,
-  );
+  let newList: BusStopModel[] | null = null;
+
+  if (busStops) {
+    newList = [...busStops].sort(({ distance: a }, { distance: b }) => a! - b!);
+  }
 
   return (
     <div>
-      {newList.length > 0 && (
+      {newList && newList.length > 0 && (
         <IonList>
           {newList.map((busStop) => {
             const bd = busStop.Description.includes("/")
@@ -40,7 +42,7 @@ const BusStopList: React.FC<{
           })}
         </IonList>
       )}
-      {newList.length === 0 && (
+      {newList && newList.length === 0 && (
         <div className="no-info">No Bus Stop Available</div>
       )}
     </div>
