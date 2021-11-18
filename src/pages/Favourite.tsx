@@ -86,7 +86,10 @@ const Favourite: React.FC = () => {
         {favStore.busStop.length > 0 && (
           <IonList ref={slidingRef}>
             {favStore.busStop.map((busStop) => {
-              const routeLink = `/busarrival/${busStop.busStopCode}/${busStop.busStopName}/${busStop.roadName}`;
+              const bd = busStop.busStopName.includes("/")
+                ? busStop.busStopName.replace("/", "_")
+                : busStop.busStopName;
+              const routeLink = `/busarrival/${busStop.busStopCode}/${bd}/${busStop.roadName}`;
               return (
                 <IonItemSliding key={busStop.busStopCode + busStop.busStopName}>
                   <IonItem routerLink={routeLink} routerDirection="forward">
