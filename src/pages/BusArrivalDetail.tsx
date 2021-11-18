@@ -118,7 +118,7 @@ const BusArrivalDetail: React.FC = () => {
         const favObj: FavBusItem = {
           busStopCode,
           roadName,
-          busStopName,
+          busStopName: busStopName.replace("_", "/"),
           favBusStop: true,
         };
         const newArr = [favObj, ...favStore.busStop];
