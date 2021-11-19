@@ -95,6 +95,12 @@ const App: React.FC = () => {
               <Route path="/busservices/:busServiceNo" exact={true}>
                 <BusServiceDetail />
               </Route>
+              <Route
+                path="/busservices/:busServiceNo/:busStopCode"
+                exact={true}
+              >
+                <BusServiceDetail />
+              </Route>
               <Route path="/busarrival" exact={true}>
                 <BusArrival />
               </Route>
