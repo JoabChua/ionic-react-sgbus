@@ -86,9 +86,14 @@ export interface FavStore {
 }
 
 export interface FavBusItem {
-  busStopCode: string;
-  busStopName: string;
-  roadName: string;
+  BusStopCode: string;
+  Description: string;
+  RoadName: string;
   favBusStop: boolean;
   buses?: string[];
+
+  // old properties
+  busStopCode?: string;
+  busStopName?: string;
+  roadName?: string;
 }

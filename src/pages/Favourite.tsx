@@ -39,7 +39,7 @@ const Favourite: React.FC = () => {
   const removeFavHandler = () => {
     dismiss();
     const idx = favStore.busStop.findIndex(
-      (favBus) => favBus.busStopCode === removeBusStop?.busStopCode,
+      (favBus) => favBus.BusStopCode === removeBusStop?.BusStopCode,
     );
     if (idx > -1) {
       favStore.busStop.splice(idx, 1);
@@ -86,19 +86,19 @@ const Favourite: React.FC = () => {
         {favStore.busStop.length > 0 && (
           <IonList ref={slidingRef}>
             {favStore.busStop.map((busStop) => {
-              const bd = busStop.busStopName.includes("/")
-                ? busStop.busStopName.replace("/", "_")
-                : busStop.busStopName;
-              const routeLink = `/busarrival/${busStop.busStopCode}/${bd}/${busStop.roadName}`;
+              const bd = busStop.Description.includes("/")
+                ? busStop.Description.replace("/", "_")
+                : busStop.Description;
+              const routeLink = `/busarrival/${busStop.BusStopCode}/${bd}/${busStop.RoadName}`;
               return (
-                <IonItemSliding key={busStop.busStopCode + busStop.busStopName}>
+                <IonItemSliding key={busStop.BusStopCode + busStop.Description}>
                   <IonItem routerLink={routeLink} routerDirection="forward">
                     <div className="stop">
                       <div className="left">
-                        <div className="desc">{busStop.busStopName}</div>
-                        <div className="road">{busStop.roadName}</div>
+                        <div className="desc">{busStop.Description}</div>
+                        <div className="road">{busStop.RoadName}</div>
                       </div>
-                      <div className="code">{busStop.busStopCode}</div>
+                      <div className="code">{busStop.BusStopCode}</div>
                     </div>
                   </IonItem>
                   <IonItemOptions>

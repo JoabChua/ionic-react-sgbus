@@ -89,7 +89,7 @@ const BusArrivalDetail: React.FC = () => {
   useEffect(() => {
     if (favStore) {
       const idx = favStore.busStop.findIndex(
-        (favBusItem) => favBusItem.busStopCode === busStopCode,
+        (favBusItem) => favBusItem.BusStopCode === busStopCode,
       );
       if (idx > -1) {
         setFavIndex(idx);
@@ -116,9 +116,9 @@ const BusArrivalDetail: React.FC = () => {
     setTimeout(() => {
       if (checked) {
         const favObj: FavBusItem = {
-          busStopCode,
-          roadName,
-          busStopName: busStopName.replace("_", "/"),
+          BusStopCode: busStopCode,
+          RoadName: roadName,
+          Description: busStopName.replace("_", "/"),
           favBusStop: true,
         };
         const newArr = [favObj, ...favStore.busStop];
@@ -234,7 +234,7 @@ const BusArrivalDetail: React.FC = () => {
             </div>
             <IonList>
               {busArrival.map((busArrival, index) => {
-                const routeLink = `/busservices/${busArrival.ServiceNo}`;
+                const routeLink = `/busservices/${busArrival.ServiceNo}/${busStopCode}`;
 
                 return (
                   <IonItem
