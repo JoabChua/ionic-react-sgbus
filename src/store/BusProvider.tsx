@@ -6,6 +6,8 @@ const BusContextProvider: React.FC = (props) => {
   const [busStop, setBusStop] = useState<BusStopModel>();
   const [busService, setBusService] = useState<BusServiceModel>();
   const [favStore, setFavStore] = useState<FavStore>({ busStop: [] });
+  const [isLoading, setIsLoading] = useState(false);
+  const [updateVersion, setUpdateVersion] = useState<string>();
 
   const setBusStopHandler = (selectedBusStop: BusStopModel) => {
     setBusStop(selectedBusStop);
@@ -20,12 +22,37 @@ const BusContextProvider: React.FC = (props) => {
     localStorage.setItem("favStore", JSON.stringify(fav));
   };
 
+  const setIsLoadingHandler = (isLoading: boolean) => {
+    setIsLoading(!isLoading);
+  };
+
+  const setUpdateVersionHandler = (updatedVersion: string) => {
+    setUpdateVersion(updatedVersion);
+    localStorage.setItem("updateVersion", updatedVersion);
+  };
+
   useEffect(() => {
     const fav = localStorage.getItem("favStore")
-      ? JSON.parse(localStorage.getItem("favStore")!)
+      ? (JSON.parse(localStorage.getItem("favStore")!) as FavStore)
       : false;
     if (!!fav) {
       setFavStore(fav);
+    }
+
+    const version = localStorage.getItem("updateVersion");
+    if (!version || version !== "1") {
+      if (fav) {
+        fav.busStop.forEach((bs) => {
+          bs.BusStopCode = bs.busStopCode!;
+          bs.Description = bs.busStopName!;
+          bs.RoadName = bs.roadName!;
+          delete bs.busStopCode;
+          delete bs.busStopName;
+          delete bs.roadName;
+        });
+        setFavStoreHandler(fav);
+        setUpdateVersionHandler("1");
+      }
     }
   }, []);
 
@@ -33,9 +60,13 @@ const BusContextProvider: React.FC = (props) => {
     busStop,
     busService,
     favStore,
+    isLoading,
+    updateVersion,
     setBusStop: setBusStopHandler,
     setBusService: setBusServiceHandler,
     setFavStore: setFavStoreHandler,
+    setIsLoading: setIsLoadingHandler,
+    setUpdateVersion: setUpdateVersionHandler,
   };
 
   return (
