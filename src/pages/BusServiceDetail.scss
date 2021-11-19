@@ -61,6 +61,22 @@
   font-weight: 600;
 }
 
+.svc-detail {
+  display: flex;
+}
+
 .item {
   align-items: center;
+}
+
+.nav-icon {
+  display: flex;
+  align-items: center;
+  color: red;
+  margin-left: 8px;
+
+  ion-icon {
+    height: 28px;
+    width: 28px;
+  }
 }
