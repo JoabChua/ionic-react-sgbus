@@ -116,6 +116,7 @@ const App: React.FC = () => {
               <Route path="/aboutus" exact={true}>
                 <AboutUs />
               </Route>
+              <Route render={() => <Redirect to={{ pathname: "/" }} />} />
             </IonRouterOutlet>
           </IonSplitPane>
         </IonReactRouter>
