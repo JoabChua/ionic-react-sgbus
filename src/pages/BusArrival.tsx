@@ -56,7 +56,7 @@ const BusArrival: React.FC = () => {
 
   useEffect(() => {
     fetchLocation();
-  }, [fetchLocation]);
+  }, []);
 
   const getCurrentLocation = async () => {
     const currentPermission: PermissionStatus =
@@ -73,14 +73,16 @@ const BusArrival: React.FC = () => {
       const watchId = await Geolocation.watchPosition(
         { enableHighAccuracy: true },
         (pos) => {
-          const newPos = pos as Position;
-          setWatchCoord({
-            center: {
-              lat: newPos.coords.latitude,
-              lng: newPos.coords.longitude,
-            },
-            zoom: 16,
-          });
+          if (pos) {
+            const newPos = pos as Position;
+            setWatchCoord({
+              center: {
+                lat: newPos.coords.latitude,
+                lng: newPos.coords.longitude,
+              },
+              zoom: 16,
+            });
+          }
         },
       );
       watchIds.current.push(watchId);
@@ -189,7 +191,14 @@ const BusArrival: React.FC = () => {
           onDidDismiss={() => setError("")}
           header={"Error"}
           message={error}
-          buttons={["OK"]}
+          buttons={[
+            {
+              text: "Reload",
+              handler: () => {
+                fetchLocation();
+              },
+            },
+          ]}
         />
 
         {isLoading && <IonLoading isOpen={isLoading} message={"Loading..."} />}
