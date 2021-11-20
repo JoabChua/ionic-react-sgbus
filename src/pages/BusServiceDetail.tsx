@@ -84,9 +84,11 @@ const BusServiceDetail: React.FC = () => {
   useEffect(() => {
     setIsLoading(true);
     fetchBusRoute(busServiceNo).then(() => {
-      setTimeout(() => {
-        goToRow(busStopCode);
-      }, 400);
+      if (busStopCode) {
+        setTimeout(() => {
+          goToRow(busStopCode);
+        }, 400);
+      }
     });
   }, [busServiceNo]);
 
