@@ -24,8 +24,10 @@ import { useParams } from "react-router";
 
 const BusServiceDetail: React.FC = () => {
   const contentRef = useRef<HTMLIonContentElement | null>(null);
-  const { busServiceNo, busStopCode } =
-    useParams<{ busServiceNo: string; busStopCode: string }>();
+  const { busServiceNo, busStopCode } = useParams<{
+    busServiceNo: string;
+    busStopCode: string;
+  }>();
   const [busRoute, setBusRoute] = useState<BusRouteModel[]>(
     [] as BusRouteModel[],
   );
@@ -39,7 +41,7 @@ const BusServiceDetail: React.FC = () => {
 
   const goToRow = (rowNumber: string) => {
     let y = document.getElementById(rowNumber);
-    console.log(rowNumber, y?.offsetTop);
+    // console.log(rowNumber, y?.offsetTop);
     if (!y) {
       setDirection(direction === 1 ? 2 : 1);
     }
@@ -51,30 +53,32 @@ const BusServiceDetail: React.FC = () => {
   const fetchBusRoute = useCallback(async (serviceNo: string) => {
     setIsLoading(true);
     try {
-      let data: BusRouteModel[] =
-        +serviceNo.charAt(0) < 5
-          ? require("../services/busroute.json")
-          : require("../services/busroute2.json");
+      let data: BusRouteModel[] = require("../services/newbusroute.json");
       data = data.filter((br) => br.ServiceNo === serviceNo);
-
-      let busStops: BusStopModel[] = require("../services/busstop.json");
-      setShowDirChange(
-        data.some((br) => br.Direction === 1) &&
-          data.some((br) => br.Direction === 2),
-      );
-
-      data.forEach((br: BusRouteModel) => {
-        const findobj = busStops.find(
-          (bs) => bs.BusStopCode === br.BusStopCode,
+      if (data.length === 0) {
+        setError(
+          "Bus service not found. Please kindly contact the app developer for assistance to update data. :)",
         );
-        if (findobj) {
-          br.Description = findobj?.Description;
-          br.RoadName = findobj?.RoadName;
-        }
-      });
+      } else {
+        let busStops: BusStopModel[] = require("../services/newbusstop.json");
+        setShowDirChange(
+          data.some((br) => br.Direction === 1) &&
+            data.some((br) => br.Direction === 2),
+        );
 
-      setBusRoute(data.filter((busRoute1) => busRoute1.Direction === 1));
-      setBusRoute2(data.filter((busRoute2) => busRoute2.Direction === 2));
+        data.forEach((br: BusRouteModel) => {
+          const findobj = busStops.find(
+            (bs) => bs.BusStopCode === br.BusStopCode,
+          );
+          if (findobj) {
+            br.Description = findobj?.Description;
+            br.RoadName = findobj?.RoadName;
+          }
+        });
+
+        setBusRoute(data.filter((busRoute1) => busRoute1.Direction === 1));
+        setBusRoute2(data.filter((busRoute2) => busRoute2.Direction === 2));
+      }
     } catch (error: any) {
       setError(error);
     }
@@ -127,9 +131,13 @@ const BusServiceDetail: React.FC = () => {
       <IonContent scrollEvents={true} ref={contentRef}>
         <IonLoading isOpen={isLoading} message={"Please wait..."} />
 
-        {!isLoading && !!error && <div>{error}</div>}
+        {!isLoading && !!error && (
+          <div className="no-result-found">
+            <h2>{error}</h2>
+          </div>
+        )}
 
-        {!isLoading && (
+        {!isLoading && !error && (
           <div>
             {
               <div className="service-direction">

@@ -138,7 +138,7 @@ const GoogleMap: React.FC<{
   const renderMarkers = (map: google.maps.Map, maps: any) => {
     setGMap(map);
 
-    let data: BusStopModel[] = require("../services/busstop.json");
+    let data: BusStopModel[] = require("../services/newbusstop.json");
     setUnfilteredBusStops(() => {
       const key = "BusStopCode";
       return [...new Map(data.map((item) => [item[key], item])).values()];

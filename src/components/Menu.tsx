@@ -105,7 +105,7 @@ const Menu: React.FC<{ showAds: boolean; setAds(ads: boolean): void }> = ({
       <IonFooter>
         <IonToolbar>
           <div className="email-add">Developed By: Joab Chua</div>
-          <div className="copyright">Copyright 2021</div>
+          <div className="copyright">Copyright 2021 - 2022</div>
         </IonToolbar>
       </IonFooter>
     </IonMenu>

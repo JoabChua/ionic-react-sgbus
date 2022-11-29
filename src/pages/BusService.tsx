@@ -23,7 +23,7 @@ import {
 import { BusServiceModel, BusServiceResponseModel } from "../models/bus.model";
 import "./BusService.scss";
 import { Virtuoso } from "react-virtuoso";
-import { Http } from "@capacitor-community/http";
+import { CapacitorHttp } from "@capacitor/core";
 import { isPlatform } from "@ionic/react";
 import BusContext from "../store/BusContext";
 
@@ -58,11 +58,11 @@ const BusServices: React.FC = () => {
   const fetchBusStops = useCallback(async () => {
     setIsLoading(true);
     try {
-      const endpoint1 = Http.get({
+      const endpoint1 = CapacitorHttp.get({
         url: `${isPlatform("mobileweb") ? THINGS_PROXY : ""}${BUS_SERVICE_API}`,
         headers: LTA_ACCESSS_KEY,
       });
-      const endpoint2 = Http.get({
+      const endpoint2 = CapacitorHttp.get({
         url: `${
           isPlatform("mobileweb") ? THINGS_PROXY : ""
         }${BUS_SERVICE_API}?$skip=500`,
@@ -105,7 +105,8 @@ const BusServices: React.FC = () => {
     if (val && val.trim() !== "") {
       setBusServices(
         unFilteredBusServices.filter(
-          (busService) => busService.ServiceNo.indexOf(val) > -1,
+          (busService) =>
+            busService.ServiceNo.toLowerCase().indexOf(val.toLowerCase()) > -1,
         ),
       );
     }

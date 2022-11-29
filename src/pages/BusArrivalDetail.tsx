@@ -35,7 +35,7 @@ import {
   starOutline,
 } from "ionicons/icons";
 import { RefresherEventDetail } from "@ionic/core";
-import { Http } from "@capacitor-community/http";
+import { CapacitorHttp } from "@capacitor/core";
 import { isPlatform } from "@ionic/react";
 import { useParams } from "react-router";
 import TimeArrival from "../components/TimeArrival";
@@ -43,8 +43,11 @@ import BusContext from "../store/BusContext";
 
 const BusArrivalDetail: React.FC = () => {
   const { favStore, setFavStore } = useContext(BusContext);
-  const { busStopCode, busStopName, roadName } =
-    useParams<{ busStopCode: string; busStopName: string; roadName: string }>();
+  const { busStopCode, busStopName, roadName } = useParams<{
+    busStopCode: string;
+    busStopName: string;
+    roadName: string;
+  }>();
 
   const [busArrival, setBusArrival] = useState<BusArrivalModel[]>(
     [] as BusArrivalModel[],
@@ -58,7 +61,7 @@ const BusArrivalDetail: React.FC = () => {
 
   const fetchBusArrival = useCallback(async (busService: string) => {
     try {
-      const res1 = await Http.get({
+      const res1 = await CapacitorHttp.get({
         url: `${
           isPlatform("mobileweb") ? THINGS_PROXY : ""
         }${BUS_ARRIVAL_API}?BusStopCode=${busService}`,
